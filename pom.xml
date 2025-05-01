@@ -13,7 +13,7 @@
     <name>teleprompter</name>
     <description>Teleprompter project for Spring Boot</description>
     <properties>
-        <java.version>21</java.version>
+        <java.version>23</java.version>
     </properties>
     <dependencies>
         <dependency>
