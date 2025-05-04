@@ -171,7 +171,7 @@ public class TelePrompterService {
     }
 
     public ResponseEntity<?> downloadFile(TelePrompter telePrompter) {
-        File file = telePrompter.getOriginalFile();
+        File file = new File(telePrompter.getFilePath());
         if (file == null || !file.exists()) {
             return ResponseEntity.status(404).body(Map.of("message", "❌ File not found"));
         }
