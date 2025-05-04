@@ -72,7 +72,6 @@ public class TelePrompterService {
                     log.warn("Failed to extract content from file");
                 }
 
-                telePrompter.setOriginalFile(filePath.toFile());
             }
 
             telePrompter.setCreatedDate(LocalDate.now());
@@ -172,7 +171,7 @@ public class TelePrompterService {
 
     public ResponseEntity<?> downloadFile(TelePrompter telePrompter) {
         File file = new File(telePrompter.getFilePath());
-        if (file == null || !file.exists()) {
+        if (!file.exists()) {
             return ResponseEntity.status(404).body(Map.of("message", "❌ File not found"));
         }
 

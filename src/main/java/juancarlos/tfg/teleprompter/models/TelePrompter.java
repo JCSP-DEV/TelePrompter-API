@@ -1,16 +1,13 @@
 package juancarlos.tfg.teleprompter.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "teleprompter")
 public class TelePrompter {
 
@@ -36,9 +33,6 @@ public class TelePrompter {
     private String fileName;
 
     @Transient
-    private File originalFile;
-
-    @Transient
     private MultipartFile file;
 
     @ManyToOne
@@ -47,15 +41,6 @@ public class TelePrompter {
 
     @Override
     public String toString() {
-        return "TelePrompter{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", content='" + (content != null ? content.substring(0, Math.min(50, content.length())) + "..." : "null") + '\'' +
-                ", createdDate=" + createdDate +
-                ", updatedDate=" + updatedDate +
-                ", filePath='" + filePath + '\'' +
-                ", fileName='" + fileName + '\'' +
-                '}';
+        return "TelePrompter{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", content='" + (content != null ? content.substring(0, Math.min(50, content.length())) + "..." : "null") + '\'' + ", createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", filePath='" + filePath + '\'' + ", fileName='" + fileName + '\'' + '}';
     }
 }
