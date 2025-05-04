@@ -72,6 +72,22 @@ public class TelePrompterController {
         telePrompter.setUser(null);
         telePrompter.setFilePath(null);
         telePrompter.setUser(null);
+        telePrompter.setFileName(null);
+        telePrompter.setOriginalFile(null);
         return ResponseEntity.ok(telePrompter);
+    }
+
+    @GetMapping("/download/{id}")
+    public ResponseEntity<?> downloadTeleprompterFile(@PathVariable Long id, HttpSession session) {
+        if (utils.isNotLogged(session)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
+        }
+
+        TelePrompter telePrompter = telePrompterService.getPrompterById(id, (String) session.getAttribute("user"));
+        if (telePrompter == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "❌ Prompter not found"));
+        }
+
+        return telePrompterService.downloadFile(telePrompter);
     }
 }

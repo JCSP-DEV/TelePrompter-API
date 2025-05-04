@@ -10,6 +10,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -166,5 +168,23 @@ public class TelePrompterService {
 
         Optional<TelePrompter> telePrompter = prompterResposirtoy.findByIdAndUser(id, user.get());
         return telePrompter.orElse(null);
+    }
+
+    public ResponseEntity<?> downloadFile(TelePrompter telePrompter) {
+        File file = telePrompter.getOriginalFile();
+        if (file == null || !file.exists()) {
+            return ResponseEntity.status(404).body(Map.of("message", "❌ File not found"));
+        }
+
+        try {
+            Path filePath = Paths.get(file.getAbsolutePath());
+            byte[] data = Files.readAllBytes(filePath);
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=\"" + telePrompter.getFileName() + "\"")
+                    .body(data);
+        } catch (IOException e) {
+            log.error("Error downloading file", e);
+            return ResponseEntity.status(500).body(Map.of("message", "❌ Internal server error"));
+        }
     }
 }
