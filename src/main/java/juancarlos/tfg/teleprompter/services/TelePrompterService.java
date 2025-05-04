@@ -1,6 +1,6 @@
 package juancarlos.tfg.teleprompter.services;
 
-import juancarlos.tfg.teleprompter.models.TelePrompter;
+import juancarlos.tfg.teleprompter.models.Teleprompter;
 import juancarlos.tfg.teleprompter.models.User;
 import juancarlos.tfg.teleprompter.repositories.PrompterResposirtoy;
 import juancarlos.tfg.teleprompter.repositories.UserRepository;
@@ -33,7 +33,7 @@ public class TelePrompterService {
     private final UserRepository userRepository;
     private static final String UPLOAD_DIR = "uploads";
 
-    public boolean create(TelePrompter telePrompter, String userName) {
+    public boolean create(Teleprompter telePrompter, String userName) {
         log.info("Creating teleprompter for user: {}", userName);
         Optional<User> user = userRepository.findByUsername(userName);
 
@@ -78,7 +78,7 @@ public class TelePrompterService {
             telePrompter.setUser(user.get());
 
             log.info("Saving teleprompter: {}", telePrompter);
-            TelePrompter saved = prompterResposirtoy.save(telePrompter);
+            Teleprompter saved = prompterResposirtoy.save(telePrompter);
             log.info("Teleprompter saved with ID: {}", saved.getId());
             return true;
 
@@ -141,16 +141,16 @@ public class TelePrompterService {
         }
     }
 
-    public List<TelePrompter> getPrompters(String userName) {
+    public List<Teleprompter> getPrompters(String userName) {
         Optional<User> user = userRepository.findByUsername(userName);
         if (user.isEmpty()) {
             return List.of();
         }
         
-        List<TelePrompter> prompters = prompterResposirtoy.findByUser(user.get());
+        List<Teleprompter> prompters = prompterResposirtoy.findByUser(user.get());
         return prompters.stream()
                 .map(prompter -> {
-                    TelePrompter simplified = new TelePrompter();
+                    Teleprompter simplified = new Teleprompter();
                     simplified.setId(prompter.getId());
                     simplified.setName(prompter.getName());
                     simplified.setDescription(prompter.getDescription());
@@ -159,17 +159,17 @@ public class TelePrompterService {
                 .toList();
     }
 
-    public TelePrompter getPrompterById(Long id, String userName) {
+    public Teleprompter getPrompterById(Long id, String userName) {
         Optional<User> user = userRepository.findByUsername(userName);
         if (user.isEmpty()) {
             return null;
         }
 
-        Optional<TelePrompter> telePrompter = prompterResposirtoy.findByIdAndUser(id, user.get());
+        Optional<Teleprompter> telePrompter = prompterResposirtoy.findByIdAndUser(id, user.get());
         return telePrompter.orElse(null);
     }
 
-    public ResponseEntity<?> downloadFile(TelePrompter telePrompter) {
+    public ResponseEntity<?> downloadFile(Teleprompter telePrompter) {
         File file = new File(telePrompter.getFilePath());
         if (!file.exists()) {
             return ResponseEntity.status(404).body(Map.of("message", "❌ File not found"));
@@ -184,6 +184,29 @@ public class TelePrompterService {
         } catch (IOException e) {
             log.error("Error downloading file", e);
             return ResponseEntity.status(500).body(Map.of("message", "❌ Internal server error"));
+        }
+    }
+
+    public boolean delete(Long id, String user) {
+        Optional<User> userOptional = userRepository.findByUsername(user);
+        if (userOptional.isEmpty()) {
+            return false;
+        }
+
+        Optional<Teleprompter> telePrompter = prompterResposirtoy.findByIdAndUser(id, userOptional.get());
+        if (telePrompter.isPresent()) {
+            try {
+                File file = new File(telePrompter.get().getFilePath());
+                if (file.exists()) {
+                    Files.delete(file.toPath());
+                }
+            } catch (IOException e) {
+                log.error("Error deleting file", e);
+            }
+            prompterResposirtoy.delete(telePrompter.get());
+            return true;
+        } else {
+            return false;
         }
     }
 }

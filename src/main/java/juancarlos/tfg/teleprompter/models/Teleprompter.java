@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Entity
 @Data
 @Table(name = "teleprompter")
-public class TelePrompter {
+public class Teleprompter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +38,12 @@ public class TelePrompter {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    private Float speed;
+
+    private Integer type;
+
+    private String language;
 
     @Override
     public String toString() {

@@ -1,7 +1,7 @@
 package juancarlos.tfg.teleprompter.controllers;
 
 import juancarlos.tfg.teleprompter.utils.Utils;
-import juancarlos.tfg.teleprompter.models.TelePrompter;
+import juancarlos.tfg.teleprompter.models.Teleprompter;
 import juancarlos.tfg.teleprompter.services.TelePrompterService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ public class TelePrompterController {
     private final Utils utils;
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createTeleprompter(HttpSession session, @ModelAttribute TelePrompter telePrompter) {
+    public ResponseEntity<?> createTeleprompter(HttpSession session, @ModelAttribute Teleprompter telePrompter) {
         System.out.println("Creating teleprompter...");
         if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
@@ -48,7 +48,7 @@ public class TelePrompterController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
 
-        List<TelePrompter> prompters = telePrompterService.getPrompters((String) session.getAttribute("user"));
+        List<Teleprompter> prompters = telePrompterService.getPrompters((String) session.getAttribute("user"));
         if (prompters.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "❌ No prompters found"));
         }
@@ -63,7 +63,7 @@ public class TelePrompterController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
 
-        TelePrompter telePrompter = telePrompterService.getPrompterById(id, (String) session.getAttribute("user"));
+        Teleprompter telePrompter = telePrompterService.getPrompterById(id, (String) session.getAttribute("user"));
         if (telePrompter == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "❌ Prompter not found"));
         }
@@ -82,11 +82,24 @@ public class TelePrompterController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
 
-        TelePrompter telePrompter = telePrompterService.getPrompterById(id, (String) session.getAttribute("user"));
+        Teleprompter telePrompter = telePrompterService.getPrompterById(id, (String) session.getAttribute("user"));
         if (telePrompter == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "❌ Prompter not found"));
         }
 
         return telePrompterService.downloadFile(telePrompter);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTeleprompter(@PathVariable Long id, HttpSession session) {
+        if (utils.isNotLogged(session)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
+        }
+
+        if (telePrompterService.delete(id, (String) session.getAttribute("user"))) {
+            return ResponseEntity.ok(Map.of("message", "Prompter deleted successfully"));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "❌ Prompter not found"));
+        }
     }
 }
