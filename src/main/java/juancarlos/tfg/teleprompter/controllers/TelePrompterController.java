@@ -42,6 +42,19 @@ public class TelePrompterController {
         }
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateTeleprompter(@PathVariable Long id, @RequestBody Teleprompter telePrompter, HttpSession session) {
+        if (utils.isNotLogged(session)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
+        }
+
+        if (telePrompterService.update(id, telePrompter, (String) session.getAttribute("user"))) {
+            return ResponseEntity.ok(Map.of("message", "Prompter updated successfully"));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "❌ Prompter not found"));
+        }
+    }
+
     @GetMapping
     public ResponseEntity<?> getTeleprompters(HttpSession session) {
         if (utils.isNotLogged(session)) {

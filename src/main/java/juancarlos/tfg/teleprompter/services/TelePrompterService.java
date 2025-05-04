@@ -209,4 +209,27 @@ public class TelePrompterService {
             return false;
         }
     }
+
+    public boolean update(Long id, Teleprompter telePrompter, String user) {
+        Optional<User> userOptional = userRepository.findByUsername(user);
+        if (userOptional.isEmpty()) {
+            return false;
+        }
+
+        Optional<Teleprompter> existingTelePrompter = prompterResposirtoy.findByIdAndUser(id, userOptional.get());
+        if (existingTelePrompter.isPresent()) {
+            Teleprompter telePrompterToUpdate = existingTelePrompter.get();
+            telePrompterToUpdate.setName(telePrompter.getName());
+            telePrompterToUpdate.setDescription(telePrompter.getDescription());
+            telePrompterToUpdate.setContent(telePrompter.getContent());
+            telePrompterToUpdate.setSpeed(telePrompter.getSpeed());
+            telePrompterToUpdate.setType(telePrompter.getType());
+            telePrompterToUpdate.setLanguage(telePrompter.getLanguage());
+            telePrompterToUpdate.setUpdatedDate(telePrompter.getUpdatedDate());
+            prompterResposirtoy.save(telePrompterToUpdate);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
