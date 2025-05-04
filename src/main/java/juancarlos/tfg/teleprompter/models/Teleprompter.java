@@ -39,7 +39,7 @@ public class Teleprompter {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Float speed;
+    private Integer speed;
 
     private Integer type;
 
