@@ -68,6 +68,10 @@ public class TelePrompterController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "❌ Prompter not found"));
         }
 
+
+        telePrompter.setUser(null);
+        telePrompter.setFilePath(null);
+        telePrompter.setUser(null);
         return ResponseEntity.ok(telePrompter);
     }
 }
