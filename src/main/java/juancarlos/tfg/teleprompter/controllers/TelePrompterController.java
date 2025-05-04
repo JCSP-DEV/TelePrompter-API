@@ -55,4 +55,19 @@ public class TelePrompterController {
 
         return ResponseEntity.ok(prompters);
     }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTeleprompterById(@PathVariable Long id, HttpSession session) {
+        /*if (utils.isNotLogged(session)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
+        }*/
+
+        TelePrompter telePrompter = telePrompterService.getPrompterById(id, (String) session.getAttribute("user"));
+        if (telePrompter == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "❌ Prompter not found"));
+        }
+
+        return ResponseEntity.ok(telePrompter);
+    }
 }

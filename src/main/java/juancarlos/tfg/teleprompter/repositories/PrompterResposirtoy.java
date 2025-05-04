@@ -13,4 +13,6 @@ public interface PrompterResposirtoy extends JpaRepository<TelePrompter, Long> {
     Optional<TelePrompter> findByNameAndUserId(String name, Long user_id);
 
     List<TelePrompter> findByUser(User user);
+
+    Optional<TelePrompter> findByIdAndUser(Long id, User user);
 }

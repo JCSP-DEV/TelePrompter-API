@@ -157,4 +157,14 @@ public class TelePrompterService {
                 })
                 .toList();
     }
+
+    public TelePrompter getPrompterById(Long id, String userName) {
+        Optional<User> user = userRepository.findByUsername(userName);
+        if (user.isEmpty()) {
+            return null;
+        }
+
+        Optional<TelePrompter> telePrompter = prompterResposirtoy.findByIdAndUser(id, user.get());
+        return telePrompter.orElse(null);
+    }
 }
