@@ -222,7 +222,12 @@ public class TelePrompterService {
             telePrompterToUpdate.setName(telePrompter.getName());
             telePrompterToUpdate.setDescription(telePrompter.getDescription());
             telePrompterToUpdate.setContent(telePrompter.getContent());
-            telePrompterToUpdate.setSpeed(telePrompter.getSpeed());
+            if(telePrompter.getSpeed() != null){
+                telePrompterToUpdate.setSpeed(telePrompter.getSpeed());
+            }
+            if (telePrompter.getLanguage() != null){
+                telePrompterToUpdate.setLanguage(telePrompter.getLanguage());
+            }
             telePrompterToUpdate.setType(telePrompter.getType());
             telePrompterToUpdate.setLanguage(telePrompter.getLanguage());
             telePrompterToUpdate.setUpdatedDate(telePrompter.getUpdatedDate());

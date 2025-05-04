@@ -28,9 +28,6 @@ public class TelePrompterController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
 
-        System.out.println(telePrompter.toString());
-        System.out.println("TelePrompter: " + telePrompter.getName());
-
         if (telePrompter.getName() == null || (telePrompter.getContent() == null && telePrompter.getFile() == null)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Invalid request format"));
         }
