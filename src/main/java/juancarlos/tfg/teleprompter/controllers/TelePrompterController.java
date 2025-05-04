@@ -59,9 +59,9 @@ public class TelePrompterController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTeleprompterById(@PathVariable Long id, HttpSession session) {
-        /*if (utils.isNotLogged(session)) {
+        if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
-        }*/
+        }
 
         TelePrompter telePrompter = telePrompterService.getPrompterById(id, (String) session.getAttribute("user"));
         if (telePrompter == null) {
