@@ -154,6 +154,7 @@ public class TelePrompterService {
                     simplified.setId(prompter.getId());
                     simplified.setName(prompter.getName());
                     simplified.setDescription(prompter.getDescription());
+                    simplified.setFileName(prompter.getFileName());
                     return simplified;
                 })
                 .toList();

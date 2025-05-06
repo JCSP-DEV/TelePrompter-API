@@ -82,7 +82,6 @@ public class TelePrompterController {
         telePrompter.setUser(null);
         telePrompter.setFilePath(null);
         telePrompter.setUser(null);
-        telePrompter.setFileName(null);
         return ResponseEntity.ok(telePrompter);
     }
 
