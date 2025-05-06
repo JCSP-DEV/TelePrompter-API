@@ -32,7 +32,7 @@ public class MailService {
                 "<body>" +
                 "<div class='container'>" +
                 "<div class='header'>" +
-                "<h2>Welcome to TelePrompter!</h2>" +
+                "<h2>Welcome to TransPrompter!</h2>" +
                 "</div>" +
                 "<div class='content'>" +
                 "<p>Thank you for registering with us. To complete your registration, please use the following verification code:</p>" +
