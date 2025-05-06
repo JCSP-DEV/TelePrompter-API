@@ -17,14 +17,32 @@ public class MailService {
 
     @Async
     public void sendVerificationEmail(String to, String token) {
-        String subject = "Verificación de correo electrónico";
+        String subject = "Email Verification";
         String htmlContent = "<html>" +
-                "<body style='font-family: Arial, sans-serif;'>" +
-                "<h2>¡Gracias por registrarte!</h2>" +
-                "<p>Tu código de verificación es:</p>" +
-                "<h1 style='color: #4CAF50;'>" + token + "</h1>" +
-                "<p>Ingresa este código en la plataforma para activar tu cuenta.</p>" +
-                "<br><p>Si no solicitaste esto, ignora este mensaje.</p>" +
+                "<head>" +
+                "<style>" +
+                "body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; }" +
+                ".container { max-width: 600px; margin: 0 auto; padding: 20px; }" +
+                ".header { background-color: #4CAF50; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }" +
+                ".content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 5px 5px; }" +
+                ".token { background-color: #e8f5e9; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; color: #2e7d32; border-radius: 5px; margin: 20px 0; }" +
+                ".footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<div class='container'>" +
+                "<div class='header'>" +
+                "<h2>Welcome to TelePrompter!</h2>" +
+                "</div>" +
+                "<div class='content'>" +
+                "<p>Thank you for registering with us. To complete your registration, please use the following verification code:</p>" +
+                "<div class='token'>" + token + "</div>" +
+                "<p>Enter this code in the platform to activate your account.</p>" +
+                "<div class='footer'>" +
+                "<p>If you didn't request this verification, please ignore this email.</p>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
                 "</body></html>";
 
         try {
@@ -37,24 +55,42 @@ public class MailService {
             helper.setFrom("emailverificator@jc-sp.me");
 
             mailSender.send(message);
-            System.out.println("Correo de verificación enviado a " + to);
+            System.out.println("Verification email sent to " + to);
 
         } catch (MessagingException e) {
             e.printStackTrace();
-            System.err.println("Error al enviar correo a " + to + ": " + e.getMessage());
+            System.err.println("Error sending email to " + to + ": " + e.getMessage());
         }
     }
 
     @Async
     public void sendPasswordResetEmail(String email, String token) {
-        String subject = "Recuperación de contraseña";
+        String subject = "Password Reset Request";
         String htmlContent = "<html>" +
-                "<body style='font-family: Arial, sans-serif;'>" +
-                "<h2>Solicitud de recuperación de contraseña</h2>" +
-                "<p>Tu código de recuperación es:</p>" +
-                "<h1 style='color: #4CAF50;'>" + token + "</h1>" +
-                "<p>Ingresa este código en la plataforma para restablecer tu contraseña.</p>" +
-                "<br><p>Si no solicitaste esto, ignora este mensaje.</p>" +
+                "<head>" +
+                "<style>" +
+                "body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; }" +
+                ".container { max-width: 600px; margin: 0 auto; padding: 20px; }" +
+                ".header { background-color: #2196F3; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }" +
+                ".content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 5px 5px; }" +
+                ".token { background-color: #e3f2fd; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; color: #1565c0; border-radius: 5px; margin: 20px 0; }" +
+                ".footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<div class='container'>" +
+                "<div class='header'>" +
+                "<h2>Password Reset Request</h2>" +
+                "</div>" +
+                "<div class='content'>" +
+                "<p>We received a request to reset your password. Use the following code to proceed with the password reset:</p>" +
+                "<div class='token'>" + token + "</div>" +
+                "<p>Enter this code in the platform to reset your password.</p>" +
+                "<div class='footer'>" +
+                "<p>If you didn't request a password reset, please ignore this email.</p>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
                 "</body></html>";
 
         try {
@@ -67,11 +103,11 @@ public class MailService {
             helper.setFrom("passwordreset@jc-sp.me");
 
             mailSender.send(message);
-            System.out.println("Correo de recuperación enviado a " + email);
+            System.out.println("Password reset email sent to " + email);
 
         } catch (MessagingException e) {
             e.printStackTrace();
-            System.err.println("Error al enviar correo a " + email + ": " + e.getMessage());
+            System.err.println("Error sending email to " + email + ": " + e.getMessage());
         }
     }
 }
