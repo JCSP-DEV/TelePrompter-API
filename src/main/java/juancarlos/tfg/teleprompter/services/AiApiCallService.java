@@ -46,7 +46,7 @@ public class AiApiCallService {
             String translatedText = translationNode.path("text").asText();
             String originalLanguage = translationNode.path("original_language").asText();
             
-            return TranslationResponse.success(translatedText, originalLanguage);
+            return TranslationResponse.success(translatedText, originalLanguage, request.getTargetLanguage());
         } catch (Exception e) {
             return TranslationResponse.error("Translation failed", e.getMessage());
         }
