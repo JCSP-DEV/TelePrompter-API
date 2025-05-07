@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class FileTranslatorService {
 
-    private AiApiCallService aiApiCallService;
+    private final AiApiCallService aiApiCallService;
 
     public TranslationResponse translate(TextTranslationRequest request) {
         return aiApiCallService.translateText(request);

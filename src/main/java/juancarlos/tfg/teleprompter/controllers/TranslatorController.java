@@ -28,11 +28,11 @@ public class TranslatorController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
 
-        TranslationResponse response = aiApiCallService.translateText(request);
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
+        TranslationResponse result = aiApiCallService.translateText(request);
+        if (result.getError() == null) {
+            return ResponseEntity.ok(result);
         } else {
-            return ResponseEntity.status(500).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
     }
 
@@ -41,12 +41,12 @@ public class TranslatorController {
         if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
-        
-        TranslationResponse response = fileTranslatorService.translate(request);
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
+
+        TranslationResponse result = fileTranslatorService.translate(request);
+        if (result.getError() == null) {
+            return ResponseEntity.ok(result);
         } else {
-            return ResponseEntity.status(500).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
     }
 }

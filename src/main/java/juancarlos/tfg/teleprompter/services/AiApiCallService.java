@@ -5,91 +5,50 @@ import juancarlos.tfg.teleprompter.models.TranslationResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class AiApiCallService {
-    private static final Logger logger = LoggerFactory.getLogger(AiApiCallService.class);
-    private static final String MODEL = "deepseek/deepseek-r1:free";
-    private static final String BASE_URL = "https://openrouter.ai/api/v1";
-    
-    @Value("${ai.api.key}")
+
+    @Value("${openrouter.api.key}")
     private String apiKey;
-    
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
-    
-    public AiApiCallService(RestTemplate restTemplate, ObjectMapper objectMapper) {
-        this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
-    }
-    
-    private HttpEntity<String> createRequestEntity(TextTranslationRequest request) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + apiKey);
-        headers.set("Content-Type", "application/json");
-        
-        String prompt = String.format(
-            "Translate the following text into %s. Provide the response in JSON format with the following structure: " +
-            "{\"translated_text\": \"translation\", \"original_language\": \"detected language\", \"target_language\": \"%s\"}. " +
-            "Ensure the translation is accurate and maintains the original meaning. " +
-            "Text to translate: %s",
-            request.getTargetLanguage(),
-            request.getTargetLanguage(),
-            request.getText()
-        );
-        
-        String body = String.format(
-            "{\"model\": \"%s\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}",
-            MODEL,
-            prompt
-        );
-        
+
+    @Value("${openrouter.api.base-url}")
+    private String baseUrl;
+
+    private static HttpEntity<String> httpBody(TextTranslationRequest request, HttpHeaders headers) {
+        String body = String.format("{\"model\": \"deepseek/deepseek-r1:free\", \"messages\": [{\"role\": \"user\", \"content\": \"Translate the following text into the language specified within brackets and parentheses. Return the response in the following JSON format:\\n{\\\"text\\\": \\\"translated text\\\", \\\"original_language\\\": \\\"detected language\\\"}\\n\\nText to translate: '{%s}' {{(%s)}}\\n\\nImportant:\\n- Return ONLY the JSON object\\n- Do not add any additional text or characters\\n- Translate exactly what is provided, do not add or modify content\\n- Ensure the JSON is properly formatted\"}]}", request.getText(), request.getTargetLanguage());
         return new HttpEntity<>(body, headers);
     }
-    
+
     public TranslationResponse translateText(TextTranslationRequest request) {
-        TranslationResponse response = new TranslationResponse();
-        response.setTargetLanguage(request.getTargetLanguage());
-        
         try {
-            HttpEntity<String> entity = createRequestEntity(request);
-            ResponseEntity<String> apiResponse = restTemplate.exchange(
-                BASE_URL + "/chat/completions",
-                HttpMethod.POST,
-                entity,
-                String.class
-            );
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + apiKey);
+            headers.set("Content-Type", "application/json");
+
+            HttpEntity<String> entity = httpBody(request, headers);
+            ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/chat/completions", HttpMethod.POST, entity, String.class);
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.getBody());
+            JsonNode messageNode = root.path("choices").get(0).path("message");
+            String content = messageNode.path("content").asText();
             
-            if (apiResponse.getStatusCode() == HttpStatus.OK && apiResponse.getBody() != null) {
-                JsonNode root = objectMapper.readTree(apiResponse.getBody());
-                JsonNode messageNode = root.path("choices").get(0).path("message");
-                String content = messageNode.path("content").asText();
-                
-                // Parse the JSON response from the AI
-                JsonNode translationNode = objectMapper.readTree(content);
-                response.setTranslatedText(translationNode.path("translated_text").asText());
-                response.setOriginalLanguage(translationNode.path("original_language").asText());
-                response.setSuccess(true);
-            } else {
-                handleError(response, "API returned non-OK status: " + apiResponse.getStatusCode());
-            }
+            // Parse the JSON response from the AI
+            JsonNode translationNode = mapper.readTree(content);
+            String translatedText = translationNode.path("text").asText();
+            String originalLanguage = translationNode.path("original_language").asText();
+            
+            return TranslationResponse.success(translatedText, originalLanguage);
         } catch (Exception e) {
-            logger.error("Translation failed", e);
-            handleError(response, "Translation failed: " + e.getMessage());
+            return TranslationResponse.error("Translation failed", e.getMessage());
         }
-        
-        return response;
-    }
-    
-    private void handleError(TranslationResponse response, String errorMessage) {
-        response.setSuccess(false);
-        response.setErrorMessage(errorMessage);
-        response.setTranslatedText("");
-        response.setOriginalLanguage("");
     }
 }
