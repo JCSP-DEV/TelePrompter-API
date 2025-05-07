@@ -1,6 +1,7 @@
 package juancarlos.tfg.teleprompter.services;
 
 import juancarlos.tfg.teleprompter.models.TextTranslationRequest;
+import juancarlos.tfg.teleprompter.models.TranslationResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,10 +9,9 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class FileTranslatorService {
 
-
     private AiApiCallService aiApiCallService;
 
-    public String translate(TextTranslationRequest request) {
+    public TranslationResponse translate(TextTranslationRequest request) {
         return aiApiCallService.translateText(request);
     }
 }

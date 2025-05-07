@@ -2,6 +2,7 @@ package juancarlos.tfg.teleprompter.controllers;
 
 import juancarlos.tfg.teleprompter.utils.Utils;
 import juancarlos.tfg.teleprompter.models.TextTranslationRequest;
+import juancarlos.tfg.teleprompter.models.TranslationResponse;
 import juancarlos.tfg.teleprompter.services.AiApiCallService;
 import juancarlos.tfg.teleprompter.services.FileTranslatorService;
 import jakarta.servlet.http.HttpSession;
@@ -27,13 +28,11 @@ public class TranslatorController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
 
-
-        String result = aiApiCallService.translateText(request);
-        if (result != null) {
-            System.out.println(result);
-            return ResponseEntity.ok(result);
+        TranslationResponse response = aiApiCallService.translateText(request);
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(500).body("❌ Translation failed");
+            return ResponseEntity.status(500).body(response);
         }
     }
 
@@ -42,13 +41,12 @@ public class TranslatorController {
         if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
-        System.out.println(request.getText());
-        String result = fileTranslatorService.translate(request);
-        if (result != null) {
-            System.out.println(result);
-            return ResponseEntity.ok(result);
+        
+        TranslationResponse response = fileTranslatorService.translate(request);
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(500).body("❌ Translation failed");
+            return ResponseEntity.status(500).body(response);
         }
     }
 }
