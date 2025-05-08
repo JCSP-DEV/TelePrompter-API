@@ -55,6 +55,7 @@ public class FileTranslatorService {
             }
 
             // Create translation request
+            System.out.println("Translating content: " + content);
             TextTranslationRequest translationRequest = new TextTranslationRequest();
             translationRequest.setText(content);
             translationRequest.setTargetLanguage(request.getTargetLanguage());
