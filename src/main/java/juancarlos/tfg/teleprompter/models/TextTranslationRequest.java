@@ -6,5 +6,4 @@ import lombok.Data;
 public class TextTranslationRequest {
     private String text;
     private String targetLanguage;
-
 }

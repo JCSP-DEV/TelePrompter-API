@@ -30,22 +30,25 @@ public class TranslatorController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
 
+        System.out.println("Translating text...");
         TranslationResponse result = aiApiCallService.translateText(request);
         if (result.getError() == null) {
+            System.out.println("Text translated successfully");
             return ResponseEntity.ok(result);
         } else {
+            System.out.println("Error translating text: " + result.getError());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
     }
 
     @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> fileTranslate(HttpSession session, @ModelAttribute FileTranslationRequest request) {
-        System.out.println("Translating file...");
         if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
 
         try {
+            System.out.println("Translating file...");
             TranslationResponse result = fileTranslatorService.translateFile(request, (String) session.getAttribute("user"));
             if (result.getError() == null) {
                 System.out.println("File translated successfully");

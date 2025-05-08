@@ -24,10 +24,6 @@ public class FileTranslatorService {
     private static final String UPLOAD_DIR = "uploads";
     private final AiApiCallService aiApiCallService;
 
-    public TranslationResponse translate(TextTranslationRequest request) {
-        return aiApiCallService.translateText(request);
-    }
-
     public TranslationResponse translateFile(FileTranslationRequest request, String userName) throws IOException {
         MultipartFile file = request.getFile();
         String content = null;
@@ -69,7 +65,7 @@ public class FileTranslatorService {
             return aiApiCallService.translateText(translationRequest);
         } finally {
             // Clean up temporary file
-            //Files.deleteIfExists(filePath);
+            Files.deleteIfExists(filePath);
         }
     }
 
@@ -93,20 +89,23 @@ public class FileTranslatorService {
             }
 
             String content;
-            if (contentType.equals("text/plain")) {
-                content = new String(Files.readAllBytes(file.toPath()));
-            } else if (contentType.equals("application/pdf")) {
-                try (PDDocument document = PDDocument.load(Files.newInputStream(file.toPath()))) {
-                    PDFTextStripper stripper = new PDFTextStripper();
-                    content = stripper.getText(document);
+            switch (contentType) {
+                case "text/plain" -> content = new String(Files.readAllBytes(file.toPath()));
+                case "application/pdf" -> {
+                    try (PDDocument document = PDDocument.load(Files.newInputStream(file.toPath()))) {
+                        PDFTextStripper stripper = new PDFTextStripper();
+                        content = stripper.getText(document);
+                    }
                 }
-            } else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-                try (XWPFDocument document = new XWPFDocument(Files.newInputStream(file.toPath()))) {
-                    XWPFWordExtractor extractor = new XWPFWordExtractor(document);
-                    content = extractor.getText();
+                case "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
+                    try (XWPFDocument document = new XWPFDocument(Files.newInputStream(file.toPath()))) {
+                        XWPFWordExtractor extractor = new XWPFWordExtractor(document);
+                        content = extractor.getText();
+                    }
                 }
-            } else {
-                return null;
+                default -> {
+                    return null;
+                }
             }
 
             // Remove line breaks and extra spaces
