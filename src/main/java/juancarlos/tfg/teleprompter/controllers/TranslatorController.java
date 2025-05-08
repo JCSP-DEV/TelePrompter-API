@@ -8,8 +8,10 @@ import juancarlos.tfg.teleprompter.services.FileTranslatorService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -36,17 +38,21 @@ public class TranslatorController {
         }
     }
 
-    @PostMapping("/file")
-    public ResponseEntity<?> fileTranslate(HttpSession session, @RequestBody TextTranslationRequest request) {
+    @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> fileTranslate(HttpSession session, @RequestParam("file") MultipartFile file, @RequestParam("targetLanguage") String targetLanguage) {
         if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
 
-        TranslationResponse result = fileTranslatorService.translate(request);
-        if (result.getError() == null) {
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        try {
+            TranslationResponse result = fileTranslatorService.translateFile(file, targetLanguage, (String) session.getAttribute("user"));
+            if (result.getError() == null) {
+                return ResponseEntity.ok(result);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "❌ Error processing file: " + e.getMessage()));
         }
     }
 }

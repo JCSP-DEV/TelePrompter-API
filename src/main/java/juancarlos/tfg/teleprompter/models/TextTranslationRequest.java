@@ -1,10 +1,8 @@
 package juancarlos.tfg.teleprompter.models;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class TextTranslationRequest {
     private String text;
     private String targetLanguage;

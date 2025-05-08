@@ -4,14 +4,104 @@ import juancarlos.tfg.teleprompter.models.TextTranslationRequest;
 import juancarlos.tfg.teleprompter.models.TranslationResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 @AllArgsConstructor
 public class FileTranslatorService {
 
     private final AiApiCallService aiApiCallService;
+    private static final String UPLOAD_DIR = "uploads";
 
     public TranslationResponse translate(TextTranslationRequest request) {
         return aiApiCallService.translateText(request);
+    }
+
+    public TranslationResponse translateFile(MultipartFile file, String targetLanguage, String userName) throws IOException {
+        // Create user-specific upload directory
+        Path userUploadPath = Paths.get(UPLOAD_DIR, userName);
+        if (!Files.exists(userUploadPath)) {
+            Files.createDirectories(userUploadPath);
+        }
+
+        // Save the file temporarily
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path filePath = userUploadPath.resolve(fileName);
+        Files.copy(file.getInputStream(), filePath);
+
+        try {
+            // Extract content from file
+            String content = extractContentFromFile(filePath.toFile(), file.getContentType());
+            if (content == null) {
+                return TranslationResponse.error("Could not extract content from file", "Unsupported file format");
+            }
+
+            // Create translation request
+            TextTranslationRequest request = new TextTranslationRequest();
+            request.setText(content);
+            request.setTargetLanguage(targetLanguage);
+
+            // Translate the content
+            return aiApiCallService.translateText(request);
+        } finally {
+            // Clean up temporary file
+            Files.deleteIfExists(filePath);
+        }
+    }
+
+    private String extractContentFromFile(File file, String contentType) {
+        try {
+            // Try to detect file type from extension if content type is octet-stream
+            if (contentType == null || contentType.equals("application/octet-stream")) {
+                String fileName = file.getName().toLowerCase();
+                if (fileName.endsWith(".pdf")) {
+                    contentType = "application/pdf";
+                } else if (fileName.endsWith(".txt")) {
+                    contentType = "text/plain";
+                } else if (fileName.endsWith(".docx")) {
+                    contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                }
+            }
+
+            if (contentType == null) {
+                return null;
+            }
+
+            String content;
+            if (contentType.equals("text/plain")) {
+                content = new String(Files.readAllBytes(file.toPath()));
+            } else if (contentType.equals("application/pdf")) {
+                try (PDDocument document = PDDocument.load(Files.newInputStream(file.toPath()))) {
+                    PDFTextStripper stripper = new PDFTextStripper();
+                    content = stripper.getText(document);
+                }
+            } else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+                try (XWPFDocument document = new XWPFDocument(Files.newInputStream(file.toPath()))) {
+                    XWPFWordExtractor extractor = new XWPFWordExtractor(document);
+                    content = extractor.getText();
+                }
+            } else {
+                return null;
+            }
+
+            // Remove line breaks and extra spaces
+            content = content.replaceAll("\\r\\n|\\r|\\n", " ")
+                           .replaceAll("\\s+", " ")
+                           .trim();
+
+            return content;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
