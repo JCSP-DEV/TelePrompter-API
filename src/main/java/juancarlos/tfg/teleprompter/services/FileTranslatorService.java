@@ -54,7 +54,9 @@ public class FileTranslatorService {
                 return TranslationResponse.error("Could not extract content from file", "Unsupported file format");
             }
 
-            log.info("Content extracted successfully, length: {}", content.length());
+            // Clean and normalize the content
+            content = cleanContent(content);
+            log.info("Content extracted and cleaned successfully, length: {}", content.length());
             log.debug("Extracted content: {}", content);
 
             // Create translation request
@@ -114,16 +116,31 @@ public class FileTranslatorService {
                 return null;
             }
 
-            // Remove line breaks and extra spaces
-            content = content.replaceAll("\\r\\n|\\r|\\n", " ")
-                           .replaceAll("\\s+", " ")
-                           .trim();
-
-            log.info("Content processed successfully, final length: {}", content.length());
             return content;
         } catch (Exception e) {
             log.error("Error extracting content from file", e);
             return null;
         }
+    }
+
+    private String cleanContent(String content) {
+        if (content == null) return null;
+
+        // Remove HTML tags if present
+        content = content.replaceAll("<[^>]*>", "");
+        
+        // Remove special characters and normalize whitespace
+        content = content.replaceAll("[\\p{Cntrl}&&[^\n\t]]", "")
+                        .replaceAll("\\s+", " ")
+                        .trim();
+
+        // Remove any remaining HTML entities
+        content = content.replaceAll("&[a-zA-Z]+;", "");
+
+        // Remove any remaining special characters that might cause JSON issues
+        content = content.replaceAll("[\\p{Cntrl}]", "")
+                        .replaceAll("[^\\x20-\\x7E]", "");
+
+        return content;
     }
 }
