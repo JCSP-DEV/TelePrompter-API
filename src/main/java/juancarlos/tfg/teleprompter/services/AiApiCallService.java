@@ -35,6 +35,7 @@ public class AiApiCallService {
 
             HttpEntity<String> entity = httpBody(request, headers);
             ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/chat/completions", HttpMethod.POST, entity, String.class);
+            System.out.println("Response: " + response.getBody());
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(response.getBody());
             JsonNode messageNode = root.path("choices").get(0).path("message");
