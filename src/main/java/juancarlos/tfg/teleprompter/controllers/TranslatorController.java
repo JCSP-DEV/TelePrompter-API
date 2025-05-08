@@ -48,8 +48,10 @@ public class TranslatorController {
         try {
             TranslationResponse result = fileTranslatorService.translateFile(request, (String) session.getAttribute("user"));
             if (result.getError() == null) {
+                System.out.println("File translated successfully");
                 return ResponseEntity.ok(result);
             } else {
+                System.out.println("Error translating file: " + result.getError());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
             }
         } catch (Exception e) {
