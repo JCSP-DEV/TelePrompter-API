@@ -24,9 +24,6 @@ public class FileTranslatorService {
     private final AiApiCallService aiApiCallService;
     private static final String UPLOAD_DIR = "uploads";
 
-    public TranslationResponse translate(TextTranslationRequest request) {
-        return aiApiCallService.translateText(request);
-    }
 
     public TranslationResponse translateFile(FileTranslationRequest request, String userName) throws IOException {
         // Create user-specific upload directory
@@ -51,6 +48,10 @@ public class FileTranslatorService {
             TextTranslationRequest translationRequest = new TextTranslationRequest();
             translationRequest.setText(content);
             translationRequest.setTargetLanguage(request.getTargetLanguage());
+
+            System.out.println(translationRequest.toString());
+            System.out.println("Translating file content" + translationRequest.getText());
+            System.out.println("Target language: " + translationRequest.getTargetLanguage());
 
             // Translate the content
             return aiApiCallService.translateText(translationRequest);
