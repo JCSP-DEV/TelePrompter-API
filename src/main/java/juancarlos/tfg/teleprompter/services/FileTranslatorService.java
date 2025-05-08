@@ -2,6 +2,7 @@ package juancarlos.tfg.teleprompter.services;
 
 import juancarlos.tfg.teleprompter.models.TextTranslationRequest;
 import juancarlos.tfg.teleprompter.models.TranslationResponse;
+import juancarlos.tfg.teleprompter.models.FileTranslationRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +28,7 @@ public class FileTranslatorService {
         return aiApiCallService.translateText(request);
     }
 
-    public TranslationResponse translateFile(MultipartFile file, String targetLanguage, String userName) throws IOException {
+    public TranslationResponse translateFile(FileTranslationRequest request, String userName) throws IOException {
         // Create user-specific upload directory
         Path userUploadPath = Paths.get(UPLOAD_DIR, userName);
         if (!Files.exists(userUploadPath)) {
@@ -35,24 +36,24 @@ public class FileTranslatorService {
         }
 
         // Save the file temporarily
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        String fileName = System.currentTimeMillis() + "_" + request.getFile().getOriginalFilename();
         Path filePath = userUploadPath.resolve(fileName);
-        Files.copy(file.getInputStream(), filePath);
+        Files.copy(request.getFile().getInputStream(), filePath);
 
         try {
             // Extract content from file
-            String content = extractContentFromFile(filePath.toFile(), file.getContentType());
+            String content = extractContentFromFile(filePath.toFile(), request.getFile().getContentType());
             if (content == null) {
                 return TranslationResponse.error("Could not extract content from file", "Unsupported file format");
             }
 
             // Create translation request
-            TextTranslationRequest request = new TextTranslationRequest();
-            request.setText(content);
-            request.setTargetLanguage(targetLanguage);
+            TextTranslationRequest translationRequest = new TextTranslationRequest();
+            translationRequest.setText(content);
+            translationRequest.setTargetLanguage(request.getTargetLanguage());
 
             // Translate the content
-            return aiApiCallService.translateText(request);
+            return aiApiCallService.translateText(translationRequest);
         } finally {
             // Clean up temporary file
             Files.deleteIfExists(filePath);

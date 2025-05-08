@@ -3,6 +3,7 @@ package juancarlos.tfg.teleprompter.controllers;
 import juancarlos.tfg.teleprompter.utils.Utils;
 import juancarlos.tfg.teleprompter.models.TextTranslationRequest;
 import juancarlos.tfg.teleprompter.models.TranslationResponse;
+import juancarlos.tfg.teleprompter.models.FileTranslationRequest;
 import juancarlos.tfg.teleprompter.services.AiApiCallService;
 import juancarlos.tfg.teleprompter.services.FileTranslatorService;
 import jakarta.servlet.http.HttpSession;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -39,13 +39,13 @@ public class TranslatorController {
     }
 
     @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> fileTranslate(HttpSession session, @RequestParam("file") MultipartFile file, @RequestParam("targetLanguage") String targetLanguage) {
+    public ResponseEntity<?> fileTranslate(HttpSession session, @RequestBody FileTranslationRequest request) {
         if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
 
         try {
-            TranslationResponse result = fileTranslatorService.translateFile(file, targetLanguage, (String) session.getAttribute("user"));
+            TranslationResponse result = fileTranslatorService.translateFile(request, (String) session.getAttribute("user"));
             if (result.getError() == null) {
                 return ResponseEntity.ok(result);
             } else {
