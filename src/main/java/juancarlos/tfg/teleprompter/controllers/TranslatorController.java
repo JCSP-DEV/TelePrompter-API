@@ -39,7 +39,7 @@ public class TranslatorController {
     }
 
     @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> fileTranslate(HttpSession session, @RequestBody FileTranslationRequest request) {
+    public ResponseEntity<?> fileTranslate(HttpSession session, @ModelAttribute FileTranslationRequest request) {
         System.out.println("Translating file...");
         if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
