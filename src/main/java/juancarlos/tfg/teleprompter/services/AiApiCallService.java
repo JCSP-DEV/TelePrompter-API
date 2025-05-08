@@ -48,6 +48,7 @@ public class AiApiCallService {
             
             return TranslationResponse.success(translatedText, originalLanguage, request.getTargetLanguage());
         } catch (Exception e) {
+            e.printStackTrace();
             return TranslationResponse.error("Translation failed", e.getMessage());
         }
     }

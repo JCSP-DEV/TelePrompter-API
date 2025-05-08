@@ -1,16 +1,18 @@
 package juancarlos.tfg.teleprompter.services;
 
-import juancarlos.tfg.teleprompter.models.FileTranslationRequest;
 import juancarlos.tfg.teleprompter.models.TextTranslationRequest;
 import juancarlos.tfg.teleprompter.models.TranslationResponse;
+import juancarlos.tfg.teleprompter.models.FileTranslationRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,53 +21,43 @@ import java.nio.file.Paths;
 @AllArgsConstructor
 public class FileTranslatorService {
 
-    private static final String UPLOAD_DIR = "uploads";
     private final AiApiCallService aiApiCallService;
+    private static final String UPLOAD_DIR = "uploads";
 
     public TranslationResponse translate(TextTranslationRequest request) {
         return aiApiCallService.translateText(request);
     }
 
-    public TranslationResponse translateFile(FileTranslationRequest request, String userName) {
+    public TranslationResponse translateFile(FileTranslationRequest request, String userName) throws IOException {
         // Create user-specific upload directory
-        try {
-
-
-            Path userUploadPath = Paths.get(UPLOAD_DIR, userName);
-            if (!Files.exists(userUploadPath)) {
-                Files.createDirectories(userUploadPath);
-            }
-
-            // Save the file temporarily
-            String fileName = System.currentTimeMillis() + "_" + request.getFile().getOriginalFilename();
-            Path filePath = userUploadPath.resolve(fileName);
-            Files.copy(request.getFile().getInputStream(), filePath);
-
-            try {
-                // Extract content from file
-                String content = extractContentFromFile(filePath.toFile(), request.getFile().getContentType());
-                if (content == null) {
-                    return TranslationResponse.error("Could not extract content from file", "Unsupported file format");
-                }
-
-                // Create translation request
-                TextTranslationRequest translationRequest = new TextTranslationRequest();
-                translationRequest.setText(content);
-                translationRequest.setTargetLanguage(request.getTargetLanguage());
-
-                // Translate the content
-                return aiApiCallService.translateText(translationRequest);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                // Clean up temporary file
-                Files.deleteIfExists(filePath);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        Path userUploadPath = Paths.get(UPLOAD_DIR, userName);
+        if (!Files.exists(userUploadPath)) {
+            Files.createDirectories(userUploadPath);
         }
 
-        return null;
+        // Save the file temporarily
+        String fileName = System.currentTimeMillis() + "_" + request.getFile().getOriginalFilename();
+        Path filePath = userUploadPath.resolve(fileName);
+        Files.copy(request.getFile().getInputStream(), filePath);
+
+        try {
+            // Extract content from file
+            String content = extractContentFromFile(filePath.toFile(), request.getFile().getContentType());
+            if (content == null) {
+                return TranslationResponse.error("Could not extract content from file", "Unsupported file format");
+            }
+
+            // Create translation request
+            TextTranslationRequest translationRequest = new TextTranslationRequest();
+            translationRequest.setText(content);
+            translationRequest.setTargetLanguage(request.getTargetLanguage());
+
+            // Translate the content
+            return aiApiCallService.translateText(translationRequest);
+        } finally {
+            // Clean up temporary file
+            Files.deleteIfExists(filePath);
+        }
     }
 
     private String extractContentFromFile(File file, String contentType) {
@@ -104,7 +96,9 @@ public class FileTranslatorService {
             }
 
             // Remove line breaks and extra spaces
-            content = content.replaceAll("\\r\\n|\\r|\\n", " ").replaceAll("\\s+", " ").trim();
+            content = content.replaceAll("\\r\\n|\\r|\\n", " ")
+                           .replaceAll("\\s+", " ")
+                           .trim();
 
             return content;
         } catch (Exception e) {
