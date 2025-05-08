@@ -35,11 +35,14 @@ public class AiApiCallService {
 
             HttpEntity<String> entity = httpBody(request, headers);
             ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/chat/completions", HttpMethod.POST, entity, String.class);
-
+            System.out.println(response.getBody());
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(response.getBody());
             JsonNode messageNode = root.path("choices").get(0).path("message");
             String content = messageNode.path("content").asText();
+            
+            // Clean the content by removing any backticks and markdown code block markers
+            content = content.replaceAll("```json\\s*", "").replaceAll("```\\s*", "").trim();
             
             // Parse the JSON response from the AI
             JsonNode translationNode = mapper.readTree(content);

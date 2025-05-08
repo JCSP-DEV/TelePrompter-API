@@ -46,10 +46,7 @@ public class FileTranslatorService {
             // Store file information
 
             // Extract content based on file type
-            System.out.println(filePath);
             content = extractContentFromFile(filePath.toFile(), file.getContentType());
-            System.out.println("CONTENT" + content);
-
         }
         try {
             // Extract content from file
