@@ -44,11 +44,13 @@ public class FileTranslatorService {
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             filePath = userUploadPath.resolve(fileName);
 
+
             Files.copy(file.getInputStream(), filePath);
 
             // Store file information
 
             // Extract content based on file type
+            System.out.println(filePath);
             content = extractContentFromFile(filePath.toFile(), file.getContentType());
 
         }
@@ -67,11 +69,11 @@ public class FileTranslatorService {
             return aiApiCallService.translateText(translationRequest);
         } finally {
             // Clean up temporary file
-            Files.deleteIfExists(filePath);
+            //Files.deleteIfExists(filePath);
         }
     }
 
-    private String extractContentFromFile(File file, String contentType) throws IOException {
+    private String extractContentFromFile(File file, String contentType) {
 
         try {
             // Try to detect file type from extension if content type is octet-stream
