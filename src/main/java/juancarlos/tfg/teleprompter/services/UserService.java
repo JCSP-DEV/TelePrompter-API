@@ -98,14 +98,14 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public String resetPassword(String username, String email, String token, String password) {
+    public String resetPassword(String username, String email, String token, String password, boolean isLogged) {
         Optional<User> user = userRepository.findByEmail(email).or(() -> userRepository.findByUsername(username));
 
         if (user.isEmpty()) {
             return "Usuario no encontrado.";
         }
 
-        if (user.get().getToken() == null || !user.get().getToken().equals(token)) {
+        if (!isLogged && user.get().getToken() == null || !user.get().getToken().equals(token)) {
             return "Invalid reset token";
         }
 
