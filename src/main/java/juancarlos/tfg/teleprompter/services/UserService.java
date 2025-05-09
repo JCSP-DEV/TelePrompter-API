@@ -105,10 +105,6 @@ public class UserService {
             return "Usuario no encontrado.";
         }
 
-        if (user.get().isVerified()) {
-            return "Change password Operation not  allowed for verified users.";
-        }
-
         if (user.get().getToken() == null || !user.get().getToken().equals(token)) {
             return "Invalid reset token";
         }
