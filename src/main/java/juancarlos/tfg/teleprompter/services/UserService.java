@@ -105,7 +105,7 @@ public class UserService {
             return "Usuario no encontrado.";
         }
 
-        if (!isLogged && user.get().getToken() == null || !user.get().getToken().equals(token)) {
+        if (!isLogged && (user.get().getToken() == null || !user.get().getToken().equals(token))) {
             return "Invalid reset token";
         }
 

@@ -109,7 +109,9 @@ public class UserController {
     @PostMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestBody User request, HttpSession session) {
         boolean isLogged = !utils.isNotLogged(session);
-        request.setUsername(session.getAttribute("user").toString());
+        if(isLogged) {
+            request.setUsername(session.getAttribute("user").toString());
+        }
         if (request.getToken() == null && !isLogged) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ No Token provided"));
         }
