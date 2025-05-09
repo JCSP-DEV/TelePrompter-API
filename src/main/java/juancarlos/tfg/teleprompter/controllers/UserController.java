@@ -109,10 +109,11 @@ public class UserController {
     @PostMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestBody User request, HttpSession session) {
         boolean logged = !utils.isNotLogged(session);
+        request.setUsername(session.getAttribute("user").toString());
         if (request.getToken() == null && !logged) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ No Token provided"));
         }
-        if (request.getEmail() == null && request.getUsername() == null) {
+        if ((request.getEmail() == null && request.getUsername() == null) ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Email or Username required"));
         }
         if (request.getPassword() == null) {
