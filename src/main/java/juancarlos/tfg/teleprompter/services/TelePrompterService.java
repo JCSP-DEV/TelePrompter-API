@@ -29,9 +29,9 @@ import java.util.Optional;
 @Slf4j
 public class TelePrompterService {
 
+    private static final String UPLOAD_DIR = "uploads";
     private final PrompterResposirtoy prompterResposirtoy;
     private final UserRepository userRepository;
-    private static final String UPLOAD_DIR = "uploads";
 
     public boolean create(Teleprompter telePrompter, String userName) {
         log.info("Creating teleprompter for user: {}", userName);
@@ -90,7 +90,7 @@ public class TelePrompterService {
 
     private String extractContentFromFile(File file, String contentType) throws IOException {
         log.info("Extracting content from file: {}, type: {}", file.getName(), contentType);
-        
+
         try {
             // Try to detect file type from extension if content type is octet-stream
             if (contentType == null || contentType.equals("application/octet-stream")) {
@@ -129,9 +129,7 @@ public class TelePrompterService {
             }
 
             // Remove line breaks and extra spaces
-            content = content.replaceAll("\\r\\n|\\r|\\n", " ")
-                           .replaceAll("\\s+", " ")
-                           .trim();
+            content = content.replaceAll("\\r\\n|\\r|\\n", " ").replaceAll("\\s+", " ").trim();
 
             log.info("Extracted content, length: {}", content.length());
             return content;
@@ -146,18 +144,16 @@ public class TelePrompterService {
         if (user.isEmpty()) {
             return List.of();
         }
-        
+
         List<Teleprompter> prompters = prompterResposirtoy.findByUser(user.get());
-        return prompters.stream()
-                .map(prompter -> {
-                    Teleprompter simplified = new Teleprompter();
-                    simplified.setId(prompter.getId());
-                    simplified.setName(prompter.getName());
-                    simplified.setDescription(prompter.getDescription());
-                    simplified.setFileName(prompter.getFileName());
-                    return simplified;
-                })
-                .toList();
+        return prompters.stream().map(prompter -> {
+            Teleprompter simplified = new Teleprompter();
+            simplified.setId(prompter.getId());
+            simplified.setName(prompter.getName());
+            simplified.setDescription(prompter.getDescription());
+            simplified.setFileName(prompter.getFileName());
+            return simplified;
+        }).toList();
     }
 
     public Teleprompter getPrompterById(Long id, String userName) {
@@ -179,9 +175,7 @@ public class TelePrompterService {
         try {
             Path filePath = Paths.get(file.getAbsolutePath());
             byte[] data = Files.readAllBytes(filePath);
-            return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=\"" + telePrompter.getFileName() + "\"")
-                    .body(data);
+            return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=\"" + telePrompter.getFileName() + "\"").body(data);
         } catch (IOException e) {
             log.error("Error downloading file", e);
             return ResponseEntity.status(500).body(Map.of("message", "❌ Internal server error"));
@@ -220,18 +214,27 @@ public class TelePrompterService {
         Optional<Teleprompter> existingTelePrompter = prompterResposirtoy.findByIdAndUser(id, userOptional.get());
         if (existingTelePrompter.isPresent()) {
             Teleprompter telePrompterToUpdate = existingTelePrompter.get();
-            telePrompterToUpdate.setName(telePrompter.getName());
-            telePrompterToUpdate.setDescription(telePrompter.getDescription());
-            telePrompterToUpdate.setContent(telePrompter.getContent());
-            if(telePrompter.getSpeed() != null){
+
+            if (telePrompter.getName() != null) {
+                telePrompterToUpdate.setName(telePrompter.getName());
+            }
+            if (telePrompter.getDescription() != null) {
+                telePrompterToUpdate.setDescription(telePrompter.getDescription());
+            }
+            if (telePrompter.getSpeed() != null) {
                 telePrompterToUpdate.setSpeed(telePrompter.getSpeed());
             }
-            if (telePrompter.getLanguage() != null){
+            if (telePrompter.getType() != null) {
+                telePrompterToUpdate.setType(telePrompter.getType());
+            }
+            if (telePrompter.getLanguage() != null) {
                 telePrompterToUpdate.setLanguage(telePrompter.getLanguage());
             }
-            telePrompterToUpdate.setType(telePrompter.getType());
-            telePrompterToUpdate.setLanguage(telePrompter.getLanguage());
-            telePrompterToUpdate.setUpdatedDate(telePrompter.getUpdatedDate());
+            if (telePrompter.getContent() != null) {
+                telePrompterToUpdate.setContent(telePrompter.getContent());
+            }
+
+            telePrompterToUpdate.setUpdatedDate(LocalDate.now());
             prompterResposirtoy.save(telePrompterToUpdate);
             return true;
         } else {
