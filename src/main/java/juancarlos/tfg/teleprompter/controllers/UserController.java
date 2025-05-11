@@ -171,6 +171,7 @@ public class UserController {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ Invalid session user"));
         }
+        user.setId(currentUser.getId());
 
         if (userService.updateUser(user)) {
             return ResponseEntity.ok(Map.of("message", "User updated successfully"));

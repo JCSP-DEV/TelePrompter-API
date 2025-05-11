@@ -1,16 +1,13 @@
 package juancarlos.tfg.teleprompter.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "users")
 public class User {
 
@@ -32,18 +29,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
-                ", createdDate=" + createdDate +
-                ", updatedDate=" + updatedDate +
-                ", lastLoginDate=" + lastLoginDate +
-                ", verified=" + verified +
-                ", token='" + token + '\'' +
-                ", tokenExpiryDate=" + tokenExpiryDate +
-                '}';
+        return "User{" + "id=" + id + ", username='" + username + '\'' + ", email='" + email + '\'' + ", password='" + password + '\'' + ", role='" + role + '\'' + ", createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", lastLoginDate=" + lastLoginDate + ", verified=" + verified + ", token='" + token + '\'' + ", tokenExpiryDate=" + tokenExpiryDate + '}';
     }
 }
