@@ -144,7 +144,7 @@ public class UserController {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ Invalid session user"));
         }
-
+        if(id == -1) id = currentUser.getId();
         User targetUser = userService.loadUserById(id);
         if (targetUser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
@@ -201,4 +201,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Failed to update user"));
         }
     }
+
 }
