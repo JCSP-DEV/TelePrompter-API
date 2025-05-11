@@ -139,6 +139,7 @@ public class UserController {
         if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
+        System.out.println("Deleting user...");
 
         User currentUser = userService.loadUserByUsername(session.getAttribute("user").toString());
         if (currentUser == null) {
