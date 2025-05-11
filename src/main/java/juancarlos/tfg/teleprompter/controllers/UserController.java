@@ -135,7 +135,7 @@ public class UserController {
 
 
     @PostMapping("/delete{id}")
-    public ResponseEntity<Map<String, String>> deleteUser(HttpSession session, @PathVariable("id") Long id) {
+    public ResponseEntity<Map<String, String>> deleteUser(HttpSession session, @PathVariable("id") Long id, @RequestBody(required = false) User request) {
         if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
@@ -144,7 +144,15 @@ public class UserController {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ Invalid session user"));
         }
-        if(id == -1) id = currentUser.getId();
+        if(id == -1) {
+            if (request == null || request.getPassword() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Password required for self-deletion"));
+            }
+            if (!userService.verifyPassword(currentUser, request.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ Invalid password"));
+            }
+            id = currentUser.getId();
+        }
         User targetUser = userService.loadUserById(id);
         if (targetUser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));

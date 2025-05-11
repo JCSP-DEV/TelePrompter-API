@@ -147,4 +147,8 @@ public class UserService {
             return true;
         }).orElse(false);
     }
+
+    public boolean verifyPassword(User user, String rawPassword) {
+        return passwordEncoder.matches(rawPassword, user.getPassword());
+    }
 }
