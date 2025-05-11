@@ -139,12 +139,12 @@ public class UserController {
         if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
         }
-        System.out.println("Deleting user...");
 
         User currentUser = userService.loadUserByUsername(session.getAttribute("user").toString());
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ Invalid session user"));
         }
+
         if(id == -1) {
             if (request == null || request.getPassword() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Password required for self-deletion"));
@@ -154,20 +154,26 @@ public class UserController {
             }
             id = currentUser.getId();
         }
+
         User targetUser = userService.loadUserById(id);
         if (targetUser == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "❌ User not found"));
         }
 
         boolean isAdmin = currentUser.getRole().equals(UserRole.ADMIN.toString());
         boolean isSelf = currentUser.getId().equals(targetUser.getId());
 
         if (isAdmin || isSelf) {
-            userService.deleteUser(id);
-            return ResponseEntity.ok(Map.of("message", "User successfully deleted"));
+            try {
+                userService.deleteUser(id);
+                return ResponseEntity.ok(Map.of("message", "✅ User successfully deleted"));
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "❌ Error deleting user: " + e.getMessage()));
+            }
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "No enough permissions"));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No enough permissions"));
     }
 
     @PatchMapping("/update")

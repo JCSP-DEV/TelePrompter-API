@@ -2,11 +2,16 @@ package juancarlos.tfg.teleprompter.services;
 
 import juancarlos.tfg.teleprompter.utils.Utils;
 import juancarlos.tfg.teleprompter.models.User;
+import juancarlos.tfg.teleprompter.models.Teleprompter;
 import juancarlos.tfg.teleprompter.repositories.UserRepository;
+import juancarlos.tfg.teleprompter.repositories.PrompterResposirtoy;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -14,12 +19,14 @@ import java.util.Random;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final Utils utils;
+    private final PrompterResposirtoy prompterRepository;
 
     public boolean createUser(User user) {
         if (utils.userExists(user)) {
@@ -76,6 +83,26 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
+        User user = loadUserById(id);
+        if (user == null) {
+            return;
+        }
+
+        // Delete all teleprompter files and records associated with the user
+        List<Teleprompter> userPrompters = prompterRepository.findByUser(user);
+        for (Teleprompter prompter : userPrompters) {
+            try {
+                File file = new File(prompter.getFilePath());
+                if (file.exists()) {
+                    Files.delete(file.toPath());
+                }
+            } catch (Exception e) {
+                log.error("Error deleting file for prompter: " + prompter.getId(), e);
+            }
+        }
+        prompterRepository.deleteAll(userPrompters);
+        
+        // Finally delete the user
         userRepository.deleteById(id);
     }
 
