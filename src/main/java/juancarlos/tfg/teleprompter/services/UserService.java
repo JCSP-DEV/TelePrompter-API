@@ -88,22 +88,61 @@ public class UserService {
             return;
         }
 
-        // Delete all teleprompter files and records associated with the user
-        List<Teleprompter> userPrompters = prompterRepository.findByUser(user);
-        for (Teleprompter prompter : userPrompters) {
-            try {
-                File file = new File(prompter.getFilePath());
-                if (file.exists()) {
-                    Files.delete(file.toPath());
+        log.info("Starting deletion process for user: {}", user.getUsername());
+
+        // Delete user's upload directory
+        try {
+            File userDir = new File("uploads/" + user.getUsername());
+            if (userDir.exists()) {
+                log.info("Deleting user directory and all contents: {}", userDir.getAbsolutePath());
+                deleteDirectory(userDir);
+                if (userDir.exists()) {
+                    log.warn("User directory still exists after deletion attempt: {}", userDir.getAbsolutePath());
+                } else {
+                    log.info("User directory successfully deleted: {}", userDir.getAbsolutePath());
                 }
-            } catch (Exception e) {
-                log.error("Error deleting file for prompter: " + prompter.getId(), e);
+            } else {
+                log.info("User directory does not exist: {}", userDir.getAbsolutePath());
             }
+        } catch (Exception e) {
+            log.error("Error deleting user directory for user: " + user.getUsername(), e);
         }
-        prompterRepository.deleteAll(userPrompters);
+
+        // Delete all teleprompter records associated with the user
+        List<Teleprompter> userPrompters = prompterRepository.findByUser(user);
+        log.info("Found {} teleprompters to delete for user: {}", userPrompters.size(), user.getUsername());
+        if (!userPrompters.isEmpty()) {
+            prompterRepository.deleteAll(userPrompters);
+            log.info("Successfully deleted all teleprompters for user: {}", user.getUsername());
+        }
         
         // Finally delete the user
+        log.info("Deleting user record for: {}", user.getUsername());
         userRepository.deleteById(id);
+        log.info("User deletion completed successfully for: {}", user.getUsername());
+    }
+
+    private void deleteDirectory(File directory) {
+        if (!directory.exists()) {
+            return;
+        }
+
+        File[] allContents = directory.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    if (!file.delete()) {
+                        log.warn("Failed to delete file: {}", file.getAbsolutePath());
+                    }
+                }
+            }
+        }
+        
+        if (!directory.delete()) {
+            log.warn("Failed to delete directory: {}", directory.getAbsolutePath());
+        }
     }
 
     public User loadUserByUsername(String username) {
