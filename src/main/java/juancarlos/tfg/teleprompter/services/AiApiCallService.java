@@ -27,6 +27,7 @@ public class AiApiCallService {
 
     public TranslationResponse translateText(TextTranslationRequest request) {
         try {
+            System.out.println("Target language: " + request.getTargetLanguage());
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + apiKey);
