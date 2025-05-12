@@ -47,6 +47,7 @@ public class AiApiCallService {
             JsonNode translationNode = mapper.readTree(content);
             String translatedText = translationNode.path("text").asText();
             String originalLanguage = translationNode.path("original_language").asText();
+            System.out.println("Original language: " + originalLanguage);
             
             return TranslationResponse.success(translatedText, originalLanguage, request.getTargetLanguage());
         } catch (Exception e) {
