@@ -21,7 +21,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@ModelAttribute User user) {
+    public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
         try {
             if (authService.register(user)) {
                 return ResponseEntity.ok(Map.of("message", "User registered successfully"));
@@ -34,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@ModelAttribute User request, HttpSession session) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody User request, HttpSession session) {
         try {
             // Validación de entrada
             System.out.println("Login attempt with request: " + request);
@@ -68,13 +68,10 @@ public class AuthController {
             loadedUser.setLastLoginDate(LocalDate.now());
             authService.updateUser(loadedUser);
 
-            System.out.println("message: " + "Login successful" + "\nuser: " + loadedUser);
             return ResponseEntity.ok(Map.of("message", "Login successful", "user", loadedUser));
         } catch (IllegalArgumentException e) {
-            System.out.println("Invalid input: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Invalid input"));
         } catch (Exception e) {
-            System.out.println("Internal server error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "❌ Internal server error"));
         }
     }
