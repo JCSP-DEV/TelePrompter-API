@@ -68,10 +68,13 @@ public class AuthController {
             loadedUser.setLastLoginDate(LocalDate.now());
             authService.updateUser(loadedUser);
 
+            System.out.println("User logged in: " + loadedUser);
             return ResponseEntity.ok(Map.of("message", "Login successful", "user", loadedUser));
         } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Invalid input"));
         } catch (Exception e) {
+            System.out.println("Internal server error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "❌ Internal server error"));
         }
     }
