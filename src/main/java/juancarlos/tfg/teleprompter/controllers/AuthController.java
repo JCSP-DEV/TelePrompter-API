@@ -21,7 +21,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
+    public ResponseEntity<Map<String, String>> register(@ModelAttribute User user) {
         try {
             if (authService.register(user)) {
                 return ResponseEntity.ok(Map.of("message", "User registered successfully"));
@@ -34,9 +34,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody User request, HttpSession session) {
+    public ResponseEntity<Map<String, Object>> login(@ModelAttribute User request, HttpSession session) {
         try {
             // Validación de entrada
+            System.out.println("Login attempt with request: " + request);
             if ((request.getUsername() == null && request.getEmail() == null) || request.getPassword() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Invalid request format"));
             }
