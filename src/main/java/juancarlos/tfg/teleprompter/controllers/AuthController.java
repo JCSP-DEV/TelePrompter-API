@@ -33,7 +33,7 @@ public class AuthController {
         }
     }
 
-    @RequestMapping(value = "/login", method = {RequestMethod.POST, RequestMethod.PUT})
+    @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@ModelAttribute User request, HttpSession session) {
         try {
             // Validación de entrada
