@@ -37,7 +37,6 @@ public class AuthController {
     public ResponseEntity<Map<String, Object>> login(@RequestBody User request, HttpSession session) {
         try {
             // Validación de entrada
-            System.out.println("Login attempt with request: " + request);
             if ((request.getUsername() == null && request.getEmail() == null) || request.getPassword() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Invalid request format"));
             }
