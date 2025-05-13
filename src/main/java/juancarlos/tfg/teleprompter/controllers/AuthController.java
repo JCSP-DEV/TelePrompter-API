@@ -68,7 +68,7 @@ public class AuthController {
             loadedUser.setLastLoginDate(LocalDate.now());
             authService.updateUser(loadedUser);
 
-            System.out.println("User logged in: " + loadedUser);
+            System.out.println("message: " + "Login successful" + "\nuser: " + loadedUser);
             return ResponseEntity.ok(Map.of("message", "Login successful", "user", loadedUser));
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid input: " + e.getMessage());
