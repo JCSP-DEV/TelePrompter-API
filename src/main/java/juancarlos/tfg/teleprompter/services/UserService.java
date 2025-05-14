@@ -146,8 +146,16 @@ public class UserService {
     }
 
     public User loadUserByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
-        return user.orElse(null);
+        List<User> users = userRepository.findAllByUsername(username);
+        return users.isEmpty() ? null : users.get(0);
+    }
+
+    public boolean isUsernameTaken(String username) {
+        return !userRepository.findAllByUsername(username).isEmpty();
+    }
+
+    public boolean isEmailTaken(String email) {
+        return !userRepository.findAllByEmail(email).isEmpty();
     }
 
     public User loadUserByEmail(String email) {

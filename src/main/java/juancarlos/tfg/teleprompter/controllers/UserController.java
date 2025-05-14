@@ -190,8 +190,7 @@ public class UserController {
 
         // Check for duplicate username
         if (user.getUsername() != null && !user.getUsername().equals(currentUser.getUsername())) {
-            User existingUser = userService.loadUserByUsername(user.getUsername());
-            if (existingUser != null) {
+            if (userService.isUsernameTaken(user.getUsername())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "❌ Username already exists"));
             }
@@ -199,8 +198,7 @@ public class UserController {
 
         // Check for duplicate email
         if (user.getEmail() != null && !user.getEmail().equals(currentUser.getEmail())) {
-            User existingUser = userService.loadUserByEmail(user.getEmail());
-            if (existingUser != null) {
+            if (userService.isEmailTaken(user.getEmail())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "❌ Email already exists"));
             }
@@ -235,8 +233,7 @@ public class UserController {
 
         // Check for duplicate username
         if (user.getUsername() != null && !user.getUsername().equals(targetUser.getUsername())) {
-            User existingUser = userService.loadUserByUsername(user.getUsername());
-            if (existingUser != null) {
+            if (userService.isUsernameTaken(user.getUsername())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "❌ Username already exists"));
             }
@@ -244,8 +241,7 @@ public class UserController {
 
         // Check for duplicate email
         if (user.getEmail() != null && !user.getEmail().equals(targetUser.getEmail())) {
-            User existingUser = userService.loadUserByEmail(user.getEmail());
-            if (existingUser != null) {
+            if (userService.isEmailTaken(user.getEmail())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "❌ Email already exists"));
             }
