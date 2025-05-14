@@ -150,12 +150,16 @@ public class UserService {
         return users.isEmpty() ? null : users.get(0);
     }
 
-    public boolean isUsernameTaken(String username) {
-        return !userRepository.findAllByUsername(username).isEmpty();
+    public boolean isUsernameTaken(String username, Long currentUserId) {
+        List<User> users = userRepository.findAllByUsername(username);
+        return users.stream()
+                .anyMatch(user -> !user.getId().equals(currentUserId));
     }
 
-    public boolean isEmailTaken(String email) {
-        return !userRepository.findAllByEmail(email).isEmpty();
+    public boolean isEmailTaken(String email, Long currentUserId) {
+        List<User> users = userRepository.findAllByEmail(email);
+        return users.stream()
+                .anyMatch(user -> !user.getId().equals(currentUserId));
     }
 
     public User loadUserByEmail(String email) {

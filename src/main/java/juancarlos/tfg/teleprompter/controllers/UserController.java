@@ -190,7 +190,7 @@ public class UserController {
 
         // Check for duplicate username
         if (user.getUsername() != null && !user.getUsername().equals(currentUser.getUsername())) {
-            if (userService.isUsernameTaken(user.getUsername())) {
+            if (userService.isUsernameTaken(user.getUsername(), currentUser.getId())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "❌ Username already exists"));
             }
@@ -198,7 +198,7 @@ public class UserController {
 
         // Check for duplicate email
         if (user.getEmail() != null && !user.getEmail().equals(currentUser.getEmail())) {
-            if (userService.isEmailTaken(user.getEmail())) {
+            if (userService.isEmailTaken(user.getEmail(), currentUser.getId())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "❌ Email already exists"));
             }
@@ -233,7 +233,7 @@ public class UserController {
 
         // Check for duplicate username
         if (user.getUsername() != null && !user.getUsername().equals(targetUser.getUsername())) {
-            if (userService.isUsernameTaken(user.getUsername())) {
+            if (userService.isUsernameTaken(user.getUsername(), targetUser.getId())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "❌ Username already exists"));
             }
@@ -241,7 +241,7 @@ public class UserController {
 
         // Check for duplicate email
         if (user.getEmail() != null && !user.getEmail().equals(targetUser.getEmail())) {
-            if (userService.isEmailTaken(user.getEmail())) {
+            if (userService.isEmailTaken(user.getEmail(), targetUser.getId())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "❌ Email already exists"));
             }
