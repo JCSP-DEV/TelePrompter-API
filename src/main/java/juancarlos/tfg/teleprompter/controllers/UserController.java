@@ -134,7 +134,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/delete{id}")
+    @PostMapping("/delete/{id}")
     public ResponseEntity<Map<String, String>> deleteUser(HttpSession session, @PathVariable("id") Long id, @RequestBody(required = false) User request) {
         if (utils.isNotLogged(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No active session"));
