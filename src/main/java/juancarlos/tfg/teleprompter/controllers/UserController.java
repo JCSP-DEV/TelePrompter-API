@@ -188,8 +188,26 @@ public class UserController {
         }
         user.setId(currentUser.getId());
 
+        // Check for duplicate username
+        if (user.getUsername() != null && !user.getUsername().equals(currentUser.getUsername())) {
+            User existingUser = userService.loadUserByUsername(user.getUsername());
+            if (existingUser != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "❌ Username already exists"));
+            }
+        }
+
+        // Check for duplicate email
+        if (user.getEmail() != null && !user.getEmail().equals(currentUser.getEmail())) {
+            User existingUser = userService.loadUserByEmail(user.getEmail());
+            if (existingUser != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "❌ Email already exists"));
+            }
+        }
+
         if (userService.updateUser(user)) {
-            return ResponseEntity.ok(Map.of("message", "User updated successfully"));
+            return ResponseEntity.ok(Map.of("message", "✅ User updated successfully"));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Failed to update user"));
         }
@@ -210,8 +228,31 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No enough permissions"));
         }
 
+        User targetUser = userService.loadUserById(id);
+        if (targetUser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "❌ User not found"));
+        }
+
+        // Check for duplicate username
+        if (user.getUsername() != null && !user.getUsername().equals(targetUser.getUsername())) {
+            User existingUser = userService.loadUserByUsername(user.getUsername());
+            if (existingUser != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "❌ Username already exists"));
+            }
+        }
+
+        // Check for duplicate email
+        if (user.getEmail() != null && !user.getEmail().equals(targetUser.getEmail())) {
+            User existingUser = userService.loadUserByEmail(user.getEmail());
+            if (existingUser != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "❌ Email already exists"));
+            }
+        }
+
         if (userService.updateUserById(id, user)) {
-            return ResponseEntity.ok(Map.of("message", "User updated successfully"));
+            return ResponseEntity.ok(Map.of("message", "✅ User updated successfully"));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Failed to update user"));
         }
