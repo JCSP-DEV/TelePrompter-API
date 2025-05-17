@@ -4,14 +4,13 @@ import juancarlos.tfg.teleprompter.utils.Utils;
 import juancarlos.tfg.teleprompter.models.User;
 import juancarlos.tfg.teleprompter.models.Teleprompter;
 import juancarlos.tfg.teleprompter.repositories.UserRepository;
-import juancarlos.tfg.teleprompter.repositories.PrompterResposirtoy;
+import juancarlos.tfg.teleprompter.repositories.PrompterRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +25,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final Utils utils;
-    private final PrompterResposirtoy prompterRepository;
+    private final PrompterRepository prompterRepository;
 
     public boolean createUser(User user) {
         if (utils.userExists(user)) {
@@ -44,7 +43,7 @@ public class UserService {
         String token = String.format("%06d", new Random().nextInt(1000000));
         mailService.sendVerificationEmail(newUser.getEmail(), token);
         newUser.setToken(token);
-        user.setToken(token); // Set token in the input user object
+        user.setToken(token);
         userRepository.save(newUser);
         return true;
     }
@@ -90,7 +89,6 @@ public class UserService {
 
         log.info("Starting deletion process for user: {}", user.getUsername());
 
-        // Delete user's upload directory
         try {
             File userDir = new File("uploads/" + user.getUsername());
             if (userDir.exists()) {
@@ -108,7 +106,6 @@ public class UserService {
             log.error("Error deleting user directory for user: " + user.getUsername(), e);
         }
 
-        // Delete all teleprompter records associated with the user
         List<Teleprompter> userPrompters = prompterRepository.findByUser(user);
         log.info("Found {} teleprompters to delete for user: {}", userPrompters.size(), user.getUsername());
         if (!userPrompters.isEmpty()) {
@@ -116,7 +113,6 @@ public class UserService {
             log.info("Successfully deleted all teleprompters for user: {}", user.getUsername());
         }
         
-        // Finally delete the user
         log.info("Deleting user record for: {}", user.getUsername());
         userRepository.deleteById(id);
         log.info("User deletion completed successfully for: {}", user.getUsername());

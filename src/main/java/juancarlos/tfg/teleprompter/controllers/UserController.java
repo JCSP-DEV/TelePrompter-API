@@ -231,7 +231,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "❌ User not found"));
         }
 
-        // Check for duplicate username
         if (user.getUsername() != null && !user.getUsername().equals(targetUser.getUsername())) {
             if (userService.isUsernameTaken(user.getUsername(), targetUser.getId())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -239,7 +238,6 @@ public class UserController {
             }
         }
 
-        // Check for duplicate email
         if (user.getEmail() != null && !user.getEmail().equals(targetUser.getEmail())) {
             if (userService.isEmailTaken(user.getEmail(), targetUser.getId())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)

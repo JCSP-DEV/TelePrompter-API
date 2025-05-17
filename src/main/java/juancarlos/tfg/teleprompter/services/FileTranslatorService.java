@@ -30,39 +30,31 @@ public class FileTranslatorService {
         Path filePath = null;
 
         if (file != null && !file.isEmpty()) {
-            // Create user-specific upload directory
             Path userUploadPath = Paths.get(UPLOAD_DIR, userName);
             if (!Files.exists(userUploadPath)) {
                 Files.createDirectories(userUploadPath);
             }
 
-            // Save the file
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             filePath = userUploadPath.resolve(fileName);
 
 
             Files.copy(file.getInputStream(), filePath);
 
-            // Store file information
 
-            // Extract content based on file type
             content = extractContentFromFile(filePath.toFile(), file.getContentType());
         }
         try {
-            // Extract content from file
             if (content == null) {
                 return TranslationResponse.error("Could not extract content from file", "Unsupported file format");
             }
 
-            // Create translation request
             TextTranslationRequest translationRequest = new TextTranslationRequest();
             translationRequest.setText(content);
             translationRequest.setTargetLanguage(request.getTargetLanguage());
 
-            // Translate the content
             return aiApiCallService.translateText(translationRequest);
         } finally {
-            // Clean up temporary file
             Files.deleteIfExists(filePath);
         }
     }
@@ -70,7 +62,6 @@ public class FileTranslatorService {
     private String extractContentFromFile(File file, String contentType) {
 
         try {
-            // Try to detect file type from extension if content type is octet-stream
             if (contentType == null || contentType.equals("application/octet-stream")) {
                 String fileName = file.getName().toLowerCase();
                 if (fileName.endsWith(".pdf")) {
@@ -106,7 +97,6 @@ public class FileTranslatorService {
                 }
             }
 
-            // Remove line breaks and extra spaces
             content = content.replaceAll("\\r\\n|\\r|\\n", " ").replaceAll("\\s+", " ").trim();
 
             return content;

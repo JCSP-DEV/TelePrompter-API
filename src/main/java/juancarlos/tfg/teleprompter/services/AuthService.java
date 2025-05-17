@@ -37,7 +37,7 @@ public class AuthService {
         newUser.setToken(token);
         newUser.setVerified(false);
         newUser.setTokenExpiryDate(LocalDate.now().plusDays(1));
-        user.setToken(token); // Set token in the input user object
+        user.setToken(token);
         userRepository.save(newUser);
         return true;
     }

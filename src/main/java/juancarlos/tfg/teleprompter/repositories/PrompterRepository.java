@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface PrompterResposirtoy extends JpaRepository<Teleprompter, Long> {
+public interface PrompterRepository extends JpaRepository<Teleprompter, Long> {
 
     Optional<Teleprompter> findByNameAndUserId(String name, Long user_id);
 

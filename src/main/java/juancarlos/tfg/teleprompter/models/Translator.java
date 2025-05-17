@@ -1,14 +1,14 @@
 package juancarlos.tfg.teleprompter.models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
+@Data
 public class Translator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

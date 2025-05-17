@@ -36,12 +36,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody User request, HttpSession session) {
         try {
-            // Validación de entrada
             if ((request.getUsername() == null && request.getEmail() == null) || request.getPassword() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "❌ Invalid request format"));
             }
 
-            // Cargar usuario por username o email
             User loadedUser = null;
             if (request.getUsername() != null) {
                 loadedUser = authService.loadUserByUsername(request.getUsername());
@@ -53,7 +51,6 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ Invalid credentials"));
             }
 
-            // Verificar contraseña
             if (!passwordEncoder.matches(request.getPassword(), loadedUser.getPassword())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ Invalid credentials"));
             }
@@ -62,7 +59,6 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ User not verified"));
             }
 
-            // Actualizar sesión y datos del usuario
             session.setAttribute("user", loadedUser.getUsername());
             loadedUser.setLastLoginDate(LocalDate.now());
             authService.updateUser(loadedUser);

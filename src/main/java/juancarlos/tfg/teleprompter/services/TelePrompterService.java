@@ -2,7 +2,7 @@ package juancarlos.tfg.teleprompter.services;
 
 import juancarlos.tfg.teleprompter.models.Teleprompter;
 import juancarlos.tfg.teleprompter.models.User;
-import juancarlos.tfg.teleprompter.repositories.PrompterResposirtoy;
+import juancarlos.tfg.teleprompter.repositories.PrompterRepository;
 import juancarlos.tfg.teleprompter.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,40 +30,35 @@ import java.util.Optional;
 public class TelePrompterService {
 
     private static final String UPLOAD_DIR = "uploads";
-    private final PrompterResposirtoy prompterResposirtoy;
+    private final PrompterRepository prompterRepository;
     private final UserRepository userRepository;
 
     public boolean create(Teleprompter telePrompter, String userName) {
         log.info("Creating teleprompter for user: {}", userName);
         Optional<User> user = userRepository.findByUsername(userName);
 
-        if (user.isEmpty() || prompterResposirtoy.findByNameAndUserId(telePrompter.getName(), user.get().getId()).isPresent()) {
+        if (user.isEmpty() || prompterRepository.findByNameAndUserId(telePrompter.getName(), user.get().getId()).isPresent()) {
             log.warn("User not found or teleprompter already exists");
             return false;
         }
 
         try {
-            // Process file if provided
             MultipartFile file = telePrompter.getFile();
             if (file != null && !file.isEmpty()) {
-                // Create user-specific upload directory
                 Path userUploadPath = Paths.get(UPLOAD_DIR, userName);
                 if (!Files.exists(userUploadPath)) {
                     Files.createDirectories(userUploadPath);
                     log.info("Created user upload directory: {}", userUploadPath);
                 }
 
-                // Save the file
                 String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
                 Path filePath = userUploadPath.resolve(fileName);
                 Files.copy(file.getInputStream(), filePath);
                 log.info("File saved to: {}", filePath);
 
-                // Store file information
                 telePrompter.setFilePath(filePath.toString());
                 telePrompter.setFileName(file.getOriginalFilename());
 
-                // Extract content based on file type
                 String content = extractContentFromFile(filePath.toFile(), file.getContentType());
                 if (content != null) {
                     log.info("Content extracted successfully, length: {}", content.length());
@@ -78,7 +73,7 @@ public class TelePrompterService {
             telePrompter.setUser(user.get());
 
             log.info("Saving teleprompter: {}", telePrompter);
-            Teleprompter saved = prompterResposirtoy.save(telePrompter);
+            Teleprompter saved = prompterRepository.save(telePrompter);
             log.info("Teleprompter saved with ID: {}", saved.getId());
             return true;
 
@@ -92,7 +87,6 @@ public class TelePrompterService {
         log.info("Extracting content from file: {}, type: {}", file.getName(), contentType);
 
         try {
-            // Try to detect file type from extension if content type is octet-stream
             if (contentType == null || contentType.equals("application/octet-stream")) {
                 String fileName = file.getName().toLowerCase();
                 if (fileName.endsWith(".pdf")) {
@@ -128,7 +122,6 @@ public class TelePrompterService {
                 return null;
             }
 
-            // Remove line breaks and extra spaces
             content = content.replaceAll("\\r\\n|\\r|\\n", " ").replaceAll("\\s+", " ").trim();
 
             log.info("Extracted content, length: {}", content.length());
@@ -145,7 +138,7 @@ public class TelePrompterService {
             return List.of();
         }
 
-        List<Teleprompter> prompters = prompterResposirtoy.findByUser(user.get());
+        List<Teleprompter> prompters = prompterRepository.findByUser(user.get());
         return prompters.stream().map(prompter -> {
             Teleprompter simplified = new Teleprompter();
             simplified.setId(prompter.getId());
@@ -162,7 +155,7 @@ public class TelePrompterService {
             return null;
         }
 
-        Optional<Teleprompter> telePrompter = prompterResposirtoy.findByIdAndUser(id, user.get());
+        Optional<Teleprompter> telePrompter = prompterRepository.findByIdAndUser(id, user.get());
         return telePrompter.orElse(null);
     }
 
@@ -188,7 +181,7 @@ public class TelePrompterService {
             return false;
         }
 
-        Optional<Teleprompter> telePrompter = prompterResposirtoy.findByIdAndUser(id, userOptional.get());
+        Optional<Teleprompter> telePrompter = prompterRepository.findByIdAndUser(id, userOptional.get());
         if (telePrompter.isPresent()) {
             try {
                 File file = new File(telePrompter.get().getFilePath());
@@ -198,7 +191,7 @@ public class TelePrompterService {
             } catch (IOException e) {
                 log.error("Error deleting file", e);
             }
-            prompterResposirtoy.delete(telePrompter.get());
+            prompterRepository.delete(telePrompter.get());
             return true;
         } else {
             return false;
@@ -211,7 +204,7 @@ public class TelePrompterService {
             return false;
         }
 
-        Optional<Teleprompter> existingTelePrompter = prompterResposirtoy.findByIdAndUser(id, userOptional.get());
+        Optional<Teleprompter> existingTelePrompter = prompterRepository.findByIdAndUser(id, userOptional.get());
         if (existingTelePrompter.isPresent()) {
             Teleprompter telePrompterToUpdate = existingTelePrompter.get();
 
@@ -235,7 +228,7 @@ public class TelePrompterService {
             }
 
             telePrompterToUpdate.setUpdatedDate(LocalDate.now());
-            prompterResposirtoy.save(telePrompterToUpdate);
+            prompterRepository.save(telePrompterToUpdate);
             return true;
         } else {
             return false;

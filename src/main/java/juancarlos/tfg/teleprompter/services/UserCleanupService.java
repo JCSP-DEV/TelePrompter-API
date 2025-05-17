@@ -15,10 +15,8 @@ public class UserCleanupService {
         this.userRepository = userRepository;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?") // Se ejecuta diariamente a medianoche
+    @Scheduled(cron = "0 0 0 * * ?")
     public void deleteUnverifiedUsers() {
-        userRepository.findAll().stream()
-                .filter(user -> !user.isVerified() && user.getTokenExpiryDate() != null && user.getTokenExpiryDate().isBefore(LocalDate.now()))
-                .forEach(userRepository::delete);
+        userRepository.findAll().stream().filter(user -> !user.isVerified() && user.getTokenExpiryDate() != null && user.getTokenExpiryDate().isBefore(LocalDate.now())).forEach(userRepository::delete);
     }
 }

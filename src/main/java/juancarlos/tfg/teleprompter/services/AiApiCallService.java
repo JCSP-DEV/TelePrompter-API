@@ -44,10 +44,8 @@ public class AiApiCallService {
             JsonNode messageNode = root.path("choices").get(0).path("message");
             String content = messageNode.path("content").asText();
             
-            // Clean the content by removing any backticks and markdown code block markers
             content = content.replaceAll("```json\\s*", "").replaceAll("```\\s*", "").trim();
             
-            // Parse the JSON response from the AI
             JsonNode translationNode = mapper.readTree(content);
             String translatedText = translationNode.path("text").asText();
             String originalLanguage = translationNode.path("original_language").asText();
