@@ -20,7 +20,6 @@ public class UserCleanupService {
     /**
      * Constructs a new UserCleanupService with the specified UserRepository.
      *
-     * @author Juan Carlos
      * @param userRepository The repository for user operations
      */
     public UserCleanupService(UserRepository userRepository) {
@@ -31,7 +30,6 @@ public class UserCleanupService {
      * Scheduled task that runs daily at midnight to delete unverified users
      * whose verification tokens have expired.
      *
-     * @author Juan Carlos
      */
     @Scheduled(cron = "0 0 0 * * ?")
     public void deleteUnverifiedUsers() {

@@ -32,7 +32,6 @@ public class SecurityConfig {
      * Configures the security filter chain with authentication and authorization rules.
      * Sets up CORS, CSRF protection, session management, and endpoint access control.
      *
-     * @author Juan Carlos
      * @param http The HttpSecurity object to configure
      * @return A configured SecurityFilterChain
      * @throws Exception if an error occurs during configuration
@@ -61,7 +60,6 @@ public class SecurityConfig {
      * Configures CORS settings for the application.
      * Allows requests from any origin with specific HTTP methods and headers.
      *
-     * @author Juan Carlos
      * @return A configured CorsConfigurationSource
      */
     @Bean
@@ -82,7 +80,6 @@ public class SecurityConfig {
      * Creates a password encoder bean for secure password hashing.
      * Uses BCrypt algorithm for password encryption.
      *
-     * @author Juan Carlos
      * @return A BCryptPasswordEncoder instance
      */
     @Bean

@@ -16,7 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * Finds a user by their username.
      *
-     * @author Juan Carlos
      * @param username The username to search for
      * @return An Optional containing the user if found
      */
@@ -25,7 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * Finds all users with the specified username.
      *
-     * @author Juan Carlos
      * @param username The username to search for
      * @return A list of users with the specified username
      */
@@ -34,7 +32,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * Finds a user by their email address.
      *
-     * @author Juan Carlos
      * @param email The email address to search for
      * @return An Optional containing the user if found
      */
@@ -43,7 +40,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * Finds all users with the specified email address.
      *
-     * @author Juan Carlos
      * @param email The email address to search for
      * @return A list of users with the specified email address
      */
@@ -52,7 +48,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * Finds a user by their verification or reset token.
      *
-     * @author Juan Carlos
      * @param token The token to search for
      * @return An Optional containing the user if found
      */

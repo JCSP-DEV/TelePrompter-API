@@ -96,7 +96,6 @@ public class Teleprompter {
      * Returns a string representation of the Teleprompter object.
      * Truncates the content to 50 characters for display purposes.
      *
-     * @author Juan Carlos
      * @return String representation of the Teleprompter object
      */
     @Override

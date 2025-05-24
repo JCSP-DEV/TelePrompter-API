@@ -77,7 +77,6 @@ public class User {
     /**
      * Returns a string representation of the User object.
      *
-     * @author Juan Carlos
      * @return String representation of the User object
      */
     @Override

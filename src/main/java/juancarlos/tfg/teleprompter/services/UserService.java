@@ -37,7 +37,6 @@ public class UserService {
      * Creates a new user in the system.
      * Sends a verification email to the user's email address.
      *
-     * @author Juan Carlos
      * @param user The user object containing user details
      * @return true if the user was created successfully, false otherwise
      */
@@ -65,7 +64,6 @@ public class UserService {
     /**
      * Activates a user account using the verification token.
      *
-     * @author Juan Carlos
      * @param token The verification token sent to the user's email
      * @return A message indicating the result of the activation attempt
      */
@@ -95,7 +93,6 @@ public class UserService {
      * Initiates the password reset process for a user.
      * Sends a password reset email with a reset token.
      *
-     * @author Juan Carlos
      * @param user The user requesting the password reset
      */
     public void requestPasswordReset(User user) {
@@ -112,7 +109,6 @@ public class UserService {
      * Deletes a user and all associated data from the system.
      * This includes user files, teleprompter documents, and the user record.
      *
-     * @author Juan Carlos
      * @param id The ID of the user to delete
      */
     public void deleteUser(Long id) {
@@ -155,7 +151,6 @@ public class UserService {
     /**
      * Recursively deletes a directory and all its contents.
      *
-     * @author Juan Carlos
      * @param directory The directory to delete
      */
     private void deleteDirectory(File directory) {
@@ -184,7 +179,6 @@ public class UserService {
     /**
      * Loads a user by their username.
      *
-     * @author Juan Carlos
      * @param username The username to search for
      * @return The user object if found, null otherwise
      */
@@ -196,7 +190,6 @@ public class UserService {
     /**
      * Checks if a username is already taken by another user.
      *
-     * @author Juan Carlos
      * @param username The username to check
      * @param currentUserId The ID of the current user (to exclude from the check)
      * @return true if the username is taken, false otherwise
@@ -210,7 +203,6 @@ public class UserService {
     /**
      * Checks if an email is already taken by another user.
      *
-     * @author Juan Carlos
      * @param email The email to check
      * @param currentUserId The ID of the current user (to exclude from the check)
      * @return true if the email is taken, false otherwise
@@ -224,7 +216,6 @@ public class UserService {
     /**
      * Loads a user by their email address.
      *
-     * @author Juan Carlos
      * @param email The email address to search for
      * @return The user object if found, null otherwise
      */
@@ -236,7 +227,6 @@ public class UserService {
     /**
      * Loads a user by their ID.
      *
-     * @author Juan Carlos
      * @param id The ID of the user to load
      * @return The user object if found, null otherwise
      */
@@ -248,7 +238,6 @@ public class UserService {
     /**
      * Loads all users in the system.
      *
-     * @author Juan Carlos
      * @return A list of all users
      */
     public List<User> loadAllUsers() {
@@ -258,7 +247,6 @@ public class UserService {
     /**
      * Resets a user's password using a reset token or current session.
      *
-     * @author Juan Carlos
      * @param username The username of the user
      * @param email The email of the user
      * @param token The reset token
@@ -287,7 +275,6 @@ public class UserService {
     /**
      * Updates the fields of an existing user with new values.
      *
-     * @author Juan Carlos
      * @param existingUser The existing user object to update
      * @param newUser The user object containing new values
      */
@@ -310,7 +297,6 @@ public class UserService {
     /**
      * Updates the current user's profile information.
      *
-     * @author Juan Carlos
      * @param user The user object containing updated information
      * @return true if the update was successful, false otherwise
      */
@@ -325,7 +311,6 @@ public class UserService {
     /**
      * Updates a user's profile information by ID.
      *
-     * @author Juan Carlos
      * @param id The ID of the user to update
      * @param user The user object containing updated information
      * @return true if the update was successful, false otherwise
@@ -341,7 +326,6 @@ public class UserService {
     /**
      * Verifies if a provided password matches the user's stored password.
      *
-     * @author Juan Carlos
      * @param user The user to verify the password for
      * @param rawPassword The password to verify
      * @return true if the password matches, false otherwise

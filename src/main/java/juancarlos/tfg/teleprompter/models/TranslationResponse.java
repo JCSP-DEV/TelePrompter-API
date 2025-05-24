@@ -43,7 +43,6 @@ public class TranslationResponse {
     /**
      * Creates a successful translation response.
      *
-     * @author Juan Carlos
      * @param text The translated text
      * @param originalLanguage The original language of the text
      * @param targetLanguage The target language of the translation
@@ -56,7 +55,6 @@ public class TranslationResponse {
     /**
      * Creates an error translation response.
      *
-     * @author Juan Carlos
      * @param error The error code
      * @param message The error message
      * @return A TranslationResponse object with error information

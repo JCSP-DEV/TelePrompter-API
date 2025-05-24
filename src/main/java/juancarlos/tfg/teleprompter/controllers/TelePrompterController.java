@@ -30,7 +30,6 @@ public class TelePrompterController {
     /**
      * Creates a new teleprompter document with optional file upload.
      *
-     * @author Juan Carlos
      * @param session The HTTP session to verify user authentication
      * @param telePrompter The teleprompter object containing document details and optional file
      * @return ResponseEntity containing success or error message
@@ -55,8 +54,6 @@ public class TelePrompterController {
 
     /**
      * Updates an existing teleprompter document.
-     *
-     * @author Juan Carlos
      * @param id The ID of the teleprompter to update
      * @param telePrompter The teleprompter object containing updated information
      * @param session The HTTP session to verify user authentication
@@ -78,7 +75,6 @@ public class TelePrompterController {
     /**
      * Retrieves all teleprompter documents for the current user.
      *
-     * @author Juan Carlos
      * @param session The HTTP session to verify user authentication
      * @return ResponseEntity containing a list of teleprompter documents or error message
      */
@@ -99,7 +95,6 @@ public class TelePrompterController {
     /**
      * Retrieves a specific teleprompter document by ID.
      *
-     * @author Juan Carlos
      * @param id The ID of the teleprompter to retrieve
      * @param session The HTTP session to verify user authentication
      * @return ResponseEntity containing the teleprompter document or error message
@@ -124,7 +119,6 @@ public class TelePrompterController {
     /**
      * Downloads the file associated with a teleprompter document.
      *
-     * @author Juan Carlos
      * @param id The ID of the teleprompter document
      * @param session The HTTP session to verify user authentication
      * @return ResponseEntity containing the file for download or error message
@@ -146,7 +140,6 @@ public class TelePrompterController {
     /**
      * Deletes a teleprompter document.
      *
-     * @author Juan Carlos
      * @param id The ID of the teleprompter to delete
      * @param session The HTTP session to verify user authentication
      * @return ResponseEntity containing success or error message

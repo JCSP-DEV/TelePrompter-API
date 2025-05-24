@@ -33,7 +33,6 @@ public class TranslatorController {
     /**
      * Translates text content to the specified target language.
      *
-     * @author Juan Carlos
      * @param session The HTTP session to verify user authentication
      * @param request The translation request containing text and target language
      * @return ResponseEntity containing the translation result or error message
@@ -58,7 +57,6 @@ public class TranslatorController {
     /**
      * Translates the contents of a file to the specified target language.
      *
-     * @author Juan Carlos
      * @param session The HTTP session to verify user authentication
      * @param request The translation request containing file and target language
      * @return ResponseEntity containing the translation result or error message

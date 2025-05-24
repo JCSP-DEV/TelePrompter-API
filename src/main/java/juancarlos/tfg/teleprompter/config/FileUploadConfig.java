@@ -13,7 +13,7 @@ import jakarta.servlet.MultipartConfigElement;
  * Configuration class for file upload settings.
  * Configures multipart file upload capabilities and sets maximum file size limits.
  *
- * @author Juan Carlos
+ 
  */
 @Configuration
 public class FileUploadConfig {
@@ -21,7 +21,7 @@ public class FileUploadConfig {
     /**
      * Creates a multipart resolver bean for handling file uploads.
      *
-     * @author Juan Carlos
+     
      * @return A new StandardServletMultipartResolver instance
      */
     @Bean
@@ -33,7 +33,6 @@ public class FileUploadConfig {
      * Creates a multipart configuration element with size limits.
      * Sets maximum file size and request size to 10MB.
      *
-     * @author Juan Carlos
      * @return A MultipartConfigElement with configured size limits
      */
     @Bean

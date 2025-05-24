@@ -44,7 +44,6 @@ public class TelePrompterService {
      * Creates a new teleprompter document with optional file upload.
      * Extracts content from uploaded files and stores them in the system.
      *
-     * @author Juan Carlos
      * @param telePrompter The teleprompter object containing document details and optional file
      * @param userName The username of the user creating the teleprompter
      * @return true if the teleprompter was created successfully, false otherwise
@@ -100,7 +99,6 @@ public class TelePrompterService {
     /**
      * Extracts text content from various file types (PDF, DOCX, TXT).
      *
-     * @author Juan Carlos
      * @param file The file to extract content from
      * @param contentType The MIME type of the file
      * @return The extracted text content, or null if extraction fails
@@ -159,7 +157,6 @@ public class TelePrompterService {
      * Retrieves all teleprompter documents for a specific user.
      * Returns simplified versions of the documents without content.
      *
-     * @author Juan Carlos
      * @param userName The username of the user
      * @return A list of simplified teleprompter documents
      */
@@ -183,7 +180,6 @@ public class TelePrompterService {
     /**
      * Retrieves a specific teleprompter document by ID for a user.
      *
-     * @author Juan Carlos
      * @param id The ID of the teleprompter to retrieve
      * @param userName The username of the user
      * @return The teleprompter document if found, null otherwise
@@ -201,7 +197,6 @@ public class TelePrompterService {
     /**
      * Downloads the file associated with a teleprompter document.
      *
-     * @author Juan Carlos
      * @param telePrompter The teleprompter document containing the file information
      * @return ResponseEntity containing the file data or an error message
      */
@@ -224,7 +219,6 @@ public class TelePrompterService {
     /**
      * Deletes a teleprompter document and its associated file.
      *
-     * @author Juan Carlos
      * @param id The ID of the teleprompter to delete
      * @param user The username of the user
      * @return true if the deletion was successful, false otherwise
@@ -255,7 +249,6 @@ public class TelePrompterService {
     /**
      * Updates an existing teleprompter document.
      *
-     * @author Juan Carlos
      * @param id The ID of the teleprompter to update
      * @param telePrompter The teleprompter object containing updated information
      * @param user The username of the user

@@ -31,7 +31,6 @@ public class AuthService {
      * Registers a new user in the system.
      * Creates a new user account and sends a verification email.
      *
-     * @author Juan Carlos
      * @param user The user object containing registration details
      * @return true if registration was successful, false otherwise
      */
@@ -59,7 +58,6 @@ public class AuthService {
     /**
      * Loads a user by their username.
      *
-     * @author Juan Carlos
      * @param name The username to search for
      * @return The user object if found, null otherwise
      */
@@ -71,7 +69,6 @@ public class AuthService {
     /**
      * Loads a user by their email address.
      *
-     * @author Juan Carlos
      * @param email The email address to search for
      * @return The user object if found, null otherwise
      */
@@ -83,7 +80,6 @@ public class AuthService {
     /**
      * Updates a user's information in the system.
      *
-     * @author Juan Carlos
      * @param user The user object containing updated information
      */
     public void updateUser(User user) {

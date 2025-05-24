@@ -25,7 +25,6 @@ public class MailService {
      * Sends a verification email to the specified recipient.
      * The email contains a verification code that the user must enter to activate their account.
      *
-     * @author Juan Carlos
      * @param to The email address of the recipient
      * @param token The verification token to be included in the email
      */
@@ -80,7 +79,6 @@ public class MailService {
      * Sends a password reset email to the specified recipient.
      * The email contains a reset code that the user must enter to reset their password.
      *
-     * @author Juan Carlos
      * @param email The email address of the recipient
      * @param token The password reset token to be included in the email
      */

@@ -30,7 +30,6 @@ public class UserController {
     /**
      * Creates a new user in the system. Only accessible by administrators.
      *
-     * @author Juan Carlos
      * @param session The HTTP session to verify user authentication
      * @param user The user object containing user details
      * @return ResponseEntity containing success or error message
@@ -55,7 +54,6 @@ public class UserController {
     /**
      * Activates a user account using the verification token.
      *
-     * @author Juan Carlos
      * @param request The user object containing the verification token
      * @return ResponseEntity containing activation status message
      */
@@ -81,7 +79,6 @@ public class UserController {
     /**
      * Retrieves a user by their ID. Only accessible by administrators.
      *
-     * @author Juan Carlos
      * @param session The HTTP session to verify user authentication
      * @param id The ID of the user to retrieve
      * @return ResponseEntity containing the user object or null if not found
@@ -104,7 +101,6 @@ public class UserController {
     /**
      * Retrieves all users in the system. Only accessible by administrators.
      *
-     * @author Juan Carlos
      * @param session The HTTP session to verify user authentication
      * @return ResponseEntity containing a list of all users
      */
@@ -122,7 +118,6 @@ public class UserController {
     /**
      * Initiates the password reset process by sending a reset email.
      *
-     * @author Juan Carlos
      * @param request The user object containing username or email
      * @return ResponseEntity containing the status of the password reset request
      */
@@ -152,7 +147,6 @@ public class UserController {
     /**
      * Resets a user's password using a reset token or current session.
      *
-     * @author Juan Carlos
      * @param request The user object containing reset token and new password
      * @param session The HTTP session to verify user authentication
      * @return ResponseEntity containing the status of the password reset
@@ -187,7 +181,6 @@ public class UserController {
     /**
      * Deletes a user from the system. Can be performed by administrators or the user themselves.
      *
-     * @author Juan Carlos
      * @param session The HTTP session to verify user authentication
      * @param id The ID of the user to delete
      * @param request The user object containing password for self-deletion
@@ -238,7 +231,6 @@ public class UserController {
     /**
      * Updates the current user's profile information.
      *
-     * @author Juan Carlos
      * @param session The HTTP session to verify user authentication
      * @param user The user object containing updated information
      * @return ResponseEntity containing the status of the update operation
@@ -281,7 +273,6 @@ public class UserController {
     /**
      * Updates a user's profile information by ID. Only accessible by administrators.
      *
-     * @author Juan Carlos
      * @param session The HTTP session to verify user authentication
      * @param id The ID of the user to update
      * @param user The user object containing updated information

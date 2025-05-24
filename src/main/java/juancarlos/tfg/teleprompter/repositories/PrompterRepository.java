@@ -18,7 +18,6 @@ public interface PrompterRepository extends JpaRepository<Teleprompter, Long> {
     /**
      * Finds a teleprompter document by its name and user ID.
      *
-     * @author Juan Carlos
      * @param name The name of the teleprompter document
      * @param user_id The ID of the user who owns the document
      * @return An Optional containing the teleprompter if found
@@ -28,7 +27,6 @@ public interface PrompterRepository extends JpaRepository<Teleprompter, Long> {
     /**
      * Finds all teleprompter documents owned by a specific user.
      *
-     * @author Juan Carlos
      * @param user The user who owns the documents
      * @return A list of teleprompter documents owned by the user
      */
@@ -37,7 +35,6 @@ public interface PrompterRepository extends JpaRepository<Teleprompter, Long> {
     /**
      * Finds a teleprompter document by its ID and owner user.
      *
-     * @author Juan Carlos
      * @param id The ID of the teleprompter document
      * @param user The user who owns the document
      * @return An Optional containing the teleprompter if found

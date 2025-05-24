@@ -30,7 +30,6 @@ public class AiApiCallService {
      * Creates an HTTP entity with the translation request body and headers.
      * Formats the request to instruct the AI model to act as a professional translator.
      *
-     * @author Juan Carlos
      * @param request The translation request containing text and target language
      * @param headers The HTTP headers for the request
      * @return An HttpEntity containing the formatted request body and headers
@@ -48,7 +47,6 @@ public class AiApiCallService {
      * Sends a request to the API and processes the response to extract the translated text
      * and detected original language.
      *
-     * @author Juan Carlos
      * @param request The translation request containing text and target language
      * @return A TranslationResponse containing the translated text, original language, and target language
      */

@@ -34,7 +34,6 @@ public class FileTranslatorService {
      * Translates the content of an uploaded file to the target language.
      * Extracts text from the file and sends it for translation.
      *
-     * @author Juan Carlos
      * @param request The translation request containing the file and target language
      * @param userName The username of the user making the request
      * @return A TranslationResponse containing the translated text or error information
@@ -77,7 +76,6 @@ public class FileTranslatorService {
      * Extracts text content from various file types.
      * Supports PDF, DOCX, and TXT files.
      *
-     * @author Juan Carlos
      * @param file The file to extract content from
      * @param contentType The MIME type of the file
      * @return The extracted text content, or null if extraction fails

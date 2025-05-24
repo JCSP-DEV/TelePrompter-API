@@ -20,7 +20,6 @@ public class TeleprompterApplication {
      * Main method that starts the Spring Boot application.
      * Loads environment variables from .env file before starting the application.
      *
-     * @author Juan Carlos
      * @param args Command line arguments passed to the application
      */
     public static void main(String[] args) {
