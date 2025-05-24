@@ -9,12 +9,26 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class that handles email operations.
+ * Provides functionality for sending verification and password reset emails.
+ *
+ * @author Juan Carlos
+ */
 @Service
 @AllArgsConstructor
 public class MailService {
 
     private JavaMailSender mailSender;
 
+    /**
+     * Sends a verification email to the specified recipient.
+     * The email contains a verification code that the user must enter to activate their account.
+     *
+     * @author Juan Carlos
+     * @param to The email address of the recipient
+     * @param token The verification token to be included in the email
+     */
     @Async
     public void sendVerificationEmail(String to, String token) {
         String subject = "Email Verification";
@@ -59,10 +73,17 @@ public class MailService {
 
         } catch (MessagingException e) {
             e.printStackTrace();
-            System.err.println("Error sending email to " + to + ": " + e.getMessage());
         }
     }
 
+    /**
+     * Sends a password reset email to the specified recipient.
+     * The email contains a reset code that the user must enter to reset their password.
+     *
+     * @author Juan Carlos
+     * @param email The email address of the recipient
+     * @param token The password reset token to be included in the email
+     */
     @Async
     public void sendPasswordResetEmail(String email, String token) {
         String subject = "Password Reset Request";

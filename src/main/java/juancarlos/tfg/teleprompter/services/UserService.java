@@ -16,6 +16,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+/**
+ * Service class that handles user-related operations.
+ * Provides functionality for user management, authentication, and profile updates.
+ *
+ * @author Juan Carlos
+ */
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -27,6 +33,14 @@ public class UserService {
     private final Utils utils;
     private final PrompterRepository prompterRepository;
 
+    /**
+     * Creates a new user in the system.
+     * Sends a verification email to the user's email address.
+     *
+     * @author Juan Carlos
+     * @param user The user object containing user details
+     * @return true if the user was created successfully, false otherwise
+     */
     public boolean createUser(User user) {
         if (utils.userExists(user)) {
             return false;
@@ -48,7 +62,13 @@ public class UserService {
         return true;
     }
 
-
+    /**
+     * Activates a user account using the verification token.
+     *
+     * @author Juan Carlos
+     * @param token The verification token sent to the user's email
+     * @return A message indicating the result of the activation attempt
+     */
     public String activateUser(String token) {
         Optional<User> user = userRepository.findByToken(token);
 
@@ -71,6 +91,13 @@ public class UserService {
         return "Invalid verification code";
     }
 
+    /**
+     * Initiates the password reset process for a user.
+     * Sends a password reset email with a reset token.
+     *
+     * @author Juan Carlos
+     * @param user The user requesting the password reset
+     */
     public void requestPasswordReset(User user) {
         String token = String.format("%06d", new Random().nextInt(1000000));
         mailService.sendPasswordResetEmail(user.getEmail(), token);
@@ -81,6 +108,13 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /**
+     * Deletes a user and all associated data from the system.
+     * This includes user files, teleprompter documents, and the user record.
+     *
+     * @author Juan Carlos
+     * @param id The ID of the user to delete
+     */
     public void deleteUser(Long id) {
         User user = loadUserById(id);
         if (user == null) {
@@ -118,6 +152,12 @@ public class UserService {
         log.info("User deletion completed successfully for: {}", user.getUsername());
     }
 
+    /**
+     * Recursively deletes a directory and all its contents.
+     *
+     * @author Juan Carlos
+     * @param directory The directory to delete
+     */
     private void deleteDirectory(File directory) {
         if (!directory.exists()) {
             return;
@@ -141,37 +181,91 @@ public class UserService {
         }
     }
 
+    /**
+     * Loads a user by their username.
+     *
+     * @author Juan Carlos
+     * @param username The username to search for
+     * @return The user object if found, null otherwise
+     */
     public User loadUserByUsername(String username) {
         List<User> users = userRepository.findAllByUsername(username);
         return users.isEmpty() ? null : users.get(0);
     }
 
+    /**
+     * Checks if a username is already taken by another user.
+     *
+     * @author Juan Carlos
+     * @param username The username to check
+     * @param currentUserId The ID of the current user (to exclude from the check)
+     * @return true if the username is taken, false otherwise
+     */
     public boolean isUsernameTaken(String username, Long currentUserId) {
         List<User> users = userRepository.findAllByUsername(username);
         return users.stream()
                 .anyMatch(user -> !user.getId().equals(currentUserId));
     }
 
+    /**
+     * Checks if an email is already taken by another user.
+     *
+     * @author Juan Carlos
+     * @param email The email to check
+     * @param currentUserId The ID of the current user (to exclude from the check)
+     * @return true if the email is taken, false otherwise
+     */
     public boolean isEmailTaken(String email, Long currentUserId) {
         List<User> users = userRepository.findAllByEmail(email);
         return users.stream()
                 .anyMatch(user -> !user.getId().equals(currentUserId));
     }
 
+    /**
+     * Loads a user by their email address.
+     *
+     * @author Juan Carlos
+     * @param email The email address to search for
+     * @return The user object if found, null otherwise
+     */
     public User loadUserByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.orElse(null);
     }
 
+    /**
+     * Loads a user by their ID.
+     *
+     * @author Juan Carlos
+     * @param id The ID of the user to load
+     * @return The user object if found, null otherwise
+     */
     public User loadUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElse(null);
     }
 
+    /**
+     * Loads all users in the system.
+     *
+     * @author Juan Carlos
+     * @return A list of all users
+     */
     public List<User> loadAllUsers() {
         return userRepository.findAll();
     }
 
+    /**
+     * Resets a user's password using a reset token or current session.
+     *
+     * @author Juan Carlos
+     * @param username The username of the user
+     * @param email The email of the user
+     * @param token The reset token
+     * @param password The new password
+     * @param isLogged Whether the user is currently logged in
+     * @return A message indicating the result of the password reset
+     */
     public String resetPassword(String username, String email, String token, String password, boolean isLogged) {
         Optional<User> user = userRepository.findByEmail(email).or(() -> userRepository.findByUsername(username));
 
@@ -190,6 +284,13 @@ public class UserService {
         return "Password reset successful";
     }
 
+    /**
+     * Updates the fields of an existing user with new values.
+     *
+     * @author Juan Carlos
+     * @param existingUser The existing user object to update
+     * @param newUser The user object containing new values
+     */
     private void updateUserFields(User existingUser, User newUser) {
         if (newUser.getUsername() != null) {
             existingUser.setUsername(newUser.getUsername());
@@ -206,6 +307,13 @@ public class UserService {
         existingUser.setUpdatedDate(LocalDate.now());
     }
 
+    /**
+     * Updates the current user's profile information.
+     *
+     * @author Juan Carlos
+     * @param user The user object containing updated information
+     * @return true if the update was successful, false otherwise
+     */
     public boolean updateUser(User user) {
         return userRepository.findById(user.getId()).map(existingUser -> {
             updateUserFields(existingUser, user);
@@ -214,6 +322,14 @@ public class UserService {
         }).orElse(false);
     }
 
+    /**
+     * Updates a user's profile information by ID.
+     *
+     * @author Juan Carlos
+     * @param id The ID of the user to update
+     * @param user The user object containing updated information
+     * @return true if the update was successful, false otherwise
+     */
     public boolean updateUserById(Long id, User user) {
         return userRepository.findById(id).map(existingUser -> {
             updateUserFields(existingUser, user);
@@ -222,6 +338,14 @@ public class UserService {
         }).orElse(false);
     }
 
+    /**
+     * Verifies if a provided password matches the user's stored password.
+     *
+     * @author Juan Carlos
+     * @param user The user to verify the password for
+     * @param rawPassword The password to verify
+     * @return true if the password matches, false otherwise
+     */
     public boolean verifyPassword(User user, String rawPassword) {
         return passwordEncoder.matches(rawPassword, user.getPassword());
     }

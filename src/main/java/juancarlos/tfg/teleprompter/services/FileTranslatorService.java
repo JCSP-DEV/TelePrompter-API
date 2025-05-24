@@ -17,6 +17,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Service class that handles file translation operations.
+ * Provides functionality for translating content from various file types (PDF, DOCX, TXT).
+ *
+ * @author Juan Carlos
+ */
 @Service
 @AllArgsConstructor
 public class FileTranslatorService {
@@ -24,6 +30,16 @@ public class FileTranslatorService {
     private static final String UPLOAD_DIR = "uploads";
     private final AiApiCallService aiApiCallService;
 
+    /**
+     * Translates the content of an uploaded file to the target language.
+     * Extracts text from the file and sends it for translation.
+     *
+     * @author Juan Carlos
+     * @param request The translation request containing the file and target language
+     * @param userName The username of the user making the request
+     * @return A TranslationResponse containing the translated text or error information
+     * @throws IOException if an error occurs during file processing
+     */
     public TranslationResponse translateFile(FileTranslationRequest request, String userName) throws IOException {
         MultipartFile file = request.getFile();
         String content = null;
@@ -38,9 +54,7 @@ public class FileTranslatorService {
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             filePath = userUploadPath.resolve(fileName);
 
-
             Files.copy(file.getInputStream(), filePath);
-
 
             content = extractContentFromFile(filePath.toFile(), file.getContentType());
         }
@@ -59,8 +73,16 @@ public class FileTranslatorService {
         }
     }
 
+    /**
+     * Extracts text content from various file types.
+     * Supports PDF, DOCX, and TXT files.
+     *
+     * @author Juan Carlos
+     * @param file The file to extract content from
+     * @param contentType The MIME type of the file
+     * @return The extracted text content, or null if extraction fails
+     */
     private String extractContentFromFile(File file, String contentType) {
-
         try {
             if (contentType == null || contentType.equals("application/octet-stream")) {
                 String fileName = file.getName().toLowerCase();

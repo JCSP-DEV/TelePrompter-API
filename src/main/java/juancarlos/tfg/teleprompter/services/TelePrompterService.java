@@ -24,6 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Service class that handles teleprompter document operations.
+ * Provides functionality for creating, updating, retrieving, and deleting teleprompter documents,
+ * as well as file handling and content extraction.
+ *
+ * @author Juan Carlos
+ */
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -33,8 +40,16 @@ public class TelePrompterService {
     private final PrompterRepository prompterRepository;
     private final UserRepository userRepository;
 
+    /**
+     * Creates a new teleprompter document with optional file upload.
+     * Extracts content from uploaded files and stores them in the system.
+     *
+     * @author Juan Carlos
+     * @param telePrompter The teleprompter object containing document details and optional file
+     * @param userName The username of the user creating the teleprompter
+     * @return true if the teleprompter was created successfully, false otherwise
+     */
     public boolean create(Teleprompter telePrompter, String userName) {
-        log.info("Creating teleprompter for user: {}", userName);
         Optional<User> user = userRepository.findByUsername(userName);
 
         if (user.isEmpty() || prompterRepository.findByNameAndUserId(telePrompter.getName(), user.get().getId()).isPresent()) {
@@ -48,7 +63,6 @@ public class TelePrompterService {
                 Path userUploadPath = Paths.get(UPLOAD_DIR, userName);
                 if (!Files.exists(userUploadPath)) {
                     Files.createDirectories(userUploadPath);
-                    log.info("Created user upload directory: {}", userUploadPath);
                 }
 
                 String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -83,6 +97,15 @@ public class TelePrompterService {
         }
     }
 
+    /**
+     * Extracts text content from various file types (PDF, DOCX, TXT).
+     *
+     * @author Juan Carlos
+     * @param file The file to extract content from
+     * @param contentType The MIME type of the file
+     * @return The extracted text content, or null if extraction fails
+     * @throws IOException if an I/O error occurs during file reading
+     */
     private String extractContentFromFile(File file, String contentType) throws IOException {
         log.info("Extracting content from file: {}, type: {}", file.getName(), contentType);
 
@@ -132,6 +155,14 @@ public class TelePrompterService {
         }
     }
 
+    /**
+     * Retrieves all teleprompter documents for a specific user.
+     * Returns simplified versions of the documents without content.
+     *
+     * @author Juan Carlos
+     * @param userName The username of the user
+     * @return A list of simplified teleprompter documents
+     */
     public List<Teleprompter> getPrompters(String userName) {
         Optional<User> user = userRepository.findByUsername(userName);
         if (user.isEmpty()) {
@@ -149,6 +180,14 @@ public class TelePrompterService {
         }).toList();
     }
 
+    /**
+     * Retrieves a specific teleprompter document by ID for a user.
+     *
+     * @author Juan Carlos
+     * @param id The ID of the teleprompter to retrieve
+     * @param userName The username of the user
+     * @return The teleprompter document if found, null otherwise
+     */
     public Teleprompter getPrompterById(Long id, String userName) {
         Optional<User> user = userRepository.findByUsername(userName);
         if (user.isEmpty()) {
@@ -159,6 +198,13 @@ public class TelePrompterService {
         return telePrompter.orElse(null);
     }
 
+    /**
+     * Downloads the file associated with a teleprompter document.
+     *
+     * @author Juan Carlos
+     * @param telePrompter The teleprompter document containing the file information
+     * @return ResponseEntity containing the file data or an error message
+     */
     public ResponseEntity<?> downloadFile(Teleprompter telePrompter) {
         File file = new File(telePrompter.getFilePath());
         if (!file.exists()) {
@@ -175,6 +221,14 @@ public class TelePrompterService {
         }
     }
 
+    /**
+     * Deletes a teleprompter document and its associated file.
+     *
+     * @author Juan Carlos
+     * @param id The ID of the teleprompter to delete
+     * @param user The username of the user
+     * @return true if the deletion was successful, false otherwise
+     */
     public boolean delete(Long id, String user) {
         Optional<User> userOptional = userRepository.findByUsername(user);
         if (userOptional.isEmpty()) {
@@ -198,6 +252,15 @@ public class TelePrompterService {
         }
     }
 
+    /**
+     * Updates an existing teleprompter document.
+     *
+     * @author Juan Carlos
+     * @param id The ID of the teleprompter to update
+     * @param telePrompter The teleprompter object containing updated information
+     * @param user The username of the user
+     * @return true if the update was successful, false otherwise
+     */
     public boolean update(Long id, Teleprompter telePrompter, String user) {
         Optional<User> userOptional = userRepository.findByUsername(user);
         if (userOptional.isEmpty()) {

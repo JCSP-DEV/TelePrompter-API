@@ -15,6 +15,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * Controller class that handles translation operations for both text and files.
+ * Provides endpoints for translating text content and file contents using AI services.
+ *
+ * @author Juan Carlos
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("/translator")
@@ -24,6 +30,14 @@ public class TranslatorController {
     private final FileTranslatorService fileTranslatorService;
     private final Utils utils;
 
+    /**
+     * Translates text content to the specified target language.
+     *
+     * @author Juan Carlos
+     * @param session The HTTP session to verify user authentication
+     * @param request The translation request containing text and target language
+     * @return ResponseEntity containing the translation result or error message
+     */
     @PostMapping("/text")
     public ResponseEntity<?> textTranslate(HttpSession session, @RequestBody TextTranslationRequest request) {
         if (utils.isNotLogged(session)) {
@@ -41,6 +55,14 @@ public class TranslatorController {
         }
     }
 
+    /**
+     * Translates the contents of a file to the specified target language.
+     *
+     * @author Juan Carlos
+     * @param session The HTTP session to verify user authentication
+     * @param request The translation request containing file and target language
+     * @return ResponseEntity containing the translation result or error message
+     */
     @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> fileTranslate(HttpSession session, @ModelAttribute FileTranslationRequest request) {
         if (utils.isNotLogged(session)) {

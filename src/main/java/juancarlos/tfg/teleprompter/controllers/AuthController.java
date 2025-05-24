@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Map;
 
+/**
+ * Controller class that handles authentication-related operations including user registration,
+ * login, session management, and logout functionality.
+ *
+ * @author Juan Carlos
+ */
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
@@ -20,6 +26,12 @@ public class AuthController {
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Registers a new user in the system.
+     *
+     * @param user The user object containing registration details
+     * @return ResponseEntity containing a success or error message
+     */
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
         try {
@@ -33,6 +45,13 @@ public class AuthController {
         }
     }
 
+    /**
+     * Authenticates a user and creates a new session.
+     *
+     * @param request The user object containing login credentials (username/email and password)
+     * @param session The HTTP session to store user information
+     * @return ResponseEntity containing login status and user information if successful
+     */
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody User request, HttpSession session) {
         try {
@@ -71,6 +90,12 @@ public class AuthController {
         }
     }
 
+    /**
+     * Checks if there is an active session for the current user.
+     *
+     * @param session The HTTP session to check
+     * @return ResponseEntity containing session status information
+     */
     @GetMapping("/check-session")
     public ResponseEntity<Object> checkSession(HttpSession session) {
         try {
@@ -85,6 +110,12 @@ public class AuthController {
         }
     }
 
+    /**
+     * Logs out the current user by invalidating their session.
+     *
+     * @param session The HTTP session to invalidate
+     * @return ResponseEntity containing logout status message
+     */
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout(HttpSession session) {
         System.out.println("Logout");

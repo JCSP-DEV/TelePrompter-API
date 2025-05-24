@@ -12,6 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Service class that handles communication with the OpenAI API for text translation.
+ * Provides functionality for translating text using GPT-3.5 Turbo model.
+ *
+ * @author Juan Carlos
+ */
 @Service
 public class AiApiCallService {
 
@@ -20,6 +26,15 @@ public class AiApiCallService {
 
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
+    /**
+     * Creates an HTTP entity with the translation request body and headers.
+     * Formats the request to instruct the AI model to act as a professional translator.
+     *
+     * @author Juan Carlos
+     * @param request The translation request containing text and target language
+     * @param headers The HTTP headers for the request
+     * @return An HttpEntity containing the formatted request body and headers
+     */
     private static HttpEntity<String> httpBody(TextTranslationRequest request, HttpHeaders headers) {
         String body = String.format("{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"system\", \"content\": \"You are a professional translator. Your task is to translate text into the specified target language. You must ALWAYS translate to the target language, never to English unless English is the target language. Return ONLY a JSON object with the translated text and detected original language.\"}, {\"role\": \"user\", \"content\": \"Translate the following text into %s. Return the response in the following JSON format:\\n{\\\"text\\\": \\\"translated text\\\", \\\"original_language\\\": \\\"detected language\\\"}\\n\\nText to translate:\\n%s\\n\\nImportant:\\n- Translate to %s ONLY\\n- Return ONLY the JSON object\\n- Do not add any additional text or characters\\n- Translate exactly what is provided, do not add or modify content\\n- Ensure the JSON is properly formatted\\n- Maintain the same tone and style as the original text\\n- Preserve any special characters or formatting\"}]}", 
             request.getTargetLanguage(),
@@ -28,6 +43,15 @@ public class AiApiCallService {
         return new HttpEntity<>(body, headers);
     }
 
+    /**
+     * Translates text using the OpenAI API.
+     * Sends a request to the API and processes the response to extract the translated text
+     * and detected original language.
+     *
+     * @author Juan Carlos
+     * @param request The translation request containing text and target language
+     * @return A TranslationResponse containing the translated text, original language, and target language
+     */
     public TranslationResponse translateText(TextTranslationRequest request) {
         try {
             System.out.println("Target language: " + request.getTargetLanguage());

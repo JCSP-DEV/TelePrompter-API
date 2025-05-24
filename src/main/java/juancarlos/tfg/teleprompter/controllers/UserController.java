@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller class that handles user-related operations including user management,
+ * account activation, password reset, and user profile updates.
+ *
+ * @author Juan Carlos
+ */
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
@@ -21,6 +27,14 @@ public class UserController {
     private final UserService userService;
     private final Utils utils;
 
+    /**
+     * Creates a new user in the system. Only accessible by administrators.
+     *
+     * @author Juan Carlos
+     * @param session The HTTP session to verify user authentication
+     * @param user The user object containing user details
+     * @return ResponseEntity containing success or error message
+     */
     @PostMapping("/create")
     public ResponseEntity<Map<String, String>> createUser(HttpSession session, @RequestBody User user) {
         if (utils.isNotLogged(session)) {
@@ -38,6 +52,13 @@ public class UserController {
         }
     }
 
+    /**
+     * Activates a user account using the verification token.
+     *
+     * @author Juan Carlos
+     * @param request The user object containing the verification token
+     * @return ResponseEntity containing activation status message
+     */
     @PostMapping("/activate")
     public ResponseEntity<Object> activateAccount(@RequestBody User request) {
         if (request.getToken() == null) {
@@ -57,6 +78,14 @@ public class UserController {
         };
     }
 
+    /**
+     * Retrieves a user by their ID. Only accessible by administrators.
+     *
+     * @author Juan Carlos
+     * @param session The HTTP session to verify user authentication
+     * @param id The ID of the user to retrieve
+     * @return ResponseEntity containing the user object or null if not found
+     */
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(HttpSession session, @PathVariable("id") Long id) {
         if (utils.isNotLogged(session)) {
@@ -72,6 +101,13 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    /**
+     * Retrieves all users in the system. Only accessible by administrators.
+     *
+     * @author Juan Carlos
+     * @param session The HTTP session to verify user authentication
+     * @return ResponseEntity containing a list of all users
+     */
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers(HttpSession session) {
         if (utils.isNotLogged(session)) {
@@ -83,6 +119,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.loadAllUsers());
     }
 
+    /**
+     * Initiates the password reset process by sending a reset email.
+     *
+     * @author Juan Carlos
+     * @param request The user object containing username or email
+     * @return ResponseEntity containing the status of the password reset request
+     */
     @PostMapping("/request-password-reset")
     public ResponseEntity<Map<String, String>> requestPasswordReset(@RequestBody User request) {
         if ((request.getUsername() == null && request.getEmail() == null)) {
@@ -106,6 +149,14 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Password reset email sent"));
     }
 
+    /**
+     * Resets a user's password using a reset token or current session.
+     *
+     * @author Juan Carlos
+     * @param request The user object containing reset token and new password
+     * @param session The HTTP session to verify user authentication
+     * @return ResponseEntity containing the status of the password reset
+     */
     @PostMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestBody User request, HttpSession session) {
         boolean isLogged = !utils.isNotLogged(session);
@@ -133,7 +184,15 @@ public class UserController {
         };
     }
 
-
+    /**
+     * Deletes a user from the system. Can be performed by administrators or the user themselves.
+     *
+     * @author Juan Carlos
+     * @param session The HTTP session to verify user authentication
+     * @param id The ID of the user to delete
+     * @param request The user object containing password for self-deletion
+     * @return ResponseEntity containing the status of the deletion operation
+     */
     @PostMapping("/delete/{id}")
     public ResponseEntity<Map<String, String>> deleteUser(HttpSession session, @PathVariable("id") Long id, @RequestBody(required = false) User request) {
         if (utils.isNotLogged(session)) {
@@ -176,6 +235,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ No enough permissions"));
     }
 
+    /**
+     * Updates the current user's profile information.
+     *
+     * @author Juan Carlos
+     * @param session The HTTP session to verify user authentication
+     * @param user The user object containing updated information
+     * @return ResponseEntity containing the status of the update operation
+     */
     @PatchMapping("/update")
     public ResponseEntity<Map<String, String>> updateUser(HttpSession session, @RequestBody User user) {
         if (utils.isNotLogged(session)) {
@@ -211,6 +278,15 @@ public class UserController {
         }
     }
 
+    /**
+     * Updates a user's profile information by ID. Only accessible by administrators.
+     *
+     * @author Juan Carlos
+     * @param session The HTTP session to verify user authentication
+     * @param id The ID of the user to update
+     * @param user The user object containing updated information
+     * @return ResponseEntity containing the status of the update operation
+     */
     @PatchMapping("/update/{id}")
     public ResponseEntity<Map<String, String>> updateUserById(HttpSession session, @PathVariable("id") Long id, @RequestBody User user) {
         if (utils.isNotLogged(session)) {
