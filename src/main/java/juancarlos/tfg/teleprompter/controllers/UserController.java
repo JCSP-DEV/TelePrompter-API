@@ -196,7 +196,6 @@ public class UserController {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "❌ Invalid session user"));
         }
-        //test
 
         if(id == -1) {
             if (request == null || request.getPassword() == null) {
